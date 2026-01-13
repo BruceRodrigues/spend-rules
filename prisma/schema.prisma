@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  color       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  rules        Rule[]
+  transactions Transaction[]
+
+  @@index([name])
+  @@map("categories")
+}
+
+model Rule {
+  id         String   @id @default(uuid())
+  categoryId String
+  name       String
+  pattern    String
+  matchType  MatchType @default(KEYWORD)
+  priority   Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  category    Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([categoryId])
+  @@index([priority])
+  @@index([isActive])
+  @@map("rules")
+}
+
+model Transaction {
+  id          String    @id @default(uuid())
+  date        DateTime
+  description String
+  amount      Decimal   @db.Decimal(10, 2)
+  categoryId  String?
+  ruleId      String?
+  isMatched   Boolean   @default(false)
+  rawData     Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  rule     Rule?     @relation(fields: [ruleId], references: [id], onDelete: SetNull)
+
+  @@index([date])
+  @@index([categoryId])
+  @@index([ruleId])
+  @@index([isMatched])
+  @@map("transactions")
+}
+
+enum MatchType {
+  KEYWORD
+  REGEX
+  EXACT
+}
