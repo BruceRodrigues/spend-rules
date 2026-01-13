@@ -1,12 +1,13 @@
-import NextAuth from "next-auth";
+import { prisma } from "@/lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import { compare } from "bcryptjs";
+import NextAuth from "next-auth";
+import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-import { prisma } from "@/lib/prisma";
-import { compare } from "bcryptjs";
-import type { NextAuthConfig } from "next-auth";
 
 export const config = {
+  secret: process.env.AUTH_SECRET,
   adapter: PrismaAdapter(prisma),
   providers: [
     Credentials({
@@ -30,10 +31,7 @@ export const config = {
           return null;
         }
 
-        const isPasswordValid = await compare(
-          credentials.password as string,
-          user.password,
-        );
+        const isPasswordValid = await compare(credentials.password as string, user.password);
 
         if (!isPasswordValid) {
           return null;
@@ -62,14 +60,20 @@ export const config = {
     error: "/login",
   },
   session: {
-    strategy: "database",
+    strategy: "jwt",
   },
   callbacks: {
-    async session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
+    async session({ session, token }) {
+      if (session.user && token.sub) {
+        session.user.id = token.sub;
       }
       return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.sub = user.id;
+      }
+      return token;
     },
   },
 } satisfies NextAuthConfig;

@@ -13,9 +13,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body>
-        <HeroUIProvider>{children}</HeroUIProvider>
+        <HeroUIProvider defaultTheme="dark">{children}</HeroUIProvider>
       </body>
     </html>
   );
