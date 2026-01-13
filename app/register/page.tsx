@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import {
   Card,
@@ -11,29 +12,29 @@ import {
   Link,
 } from "@heroui/react";
 
+type RegisterFormData = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
 export default function RegisterPage() {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<RegisterFormData>();
+
+  const password = watch("password");
+
+  const onSubmit = async (data: RegisterFormData) => {
     setError("");
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters");
-      return;
-    }
-
     setIsLoading(true);
 
     try {
@@ -43,16 +44,16 @@ export default function RegisterPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name,
-          email,
-          password,
+          name: data.name,
+          email: data.email,
+          password: data.password,
         }),
       });
 
-      const data = await response.json();
+      const responseData = await response.json();
 
       if (!response.ok) {
-        setError(data.error || "Registration failed");
+        setError(responseData.error || "Registration failed");
         setIsLoading(false);
         return;
       }
@@ -74,32 +75,50 @@ export default function RegisterPage() {
           </p>
         </CardHeader>
         <CardBody className="gap-4 pt-6">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <Input
               label="Name"
               type="text"
               placeholder="Enter your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              isRequired
+              {...register("name", {
+                required: "Name is required",
+                minLength: {
+                  value: 2,
+                  message: "Name must be at least 2 characters",
+                },
+              })}
+              isInvalid={!!errors.name}
+              errorMessage={errors.name?.message}
               isDisabled={isLoading}
             />
             <Input
               label="Email"
               type="email"
               placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              isRequired
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "Invalid email address",
+                },
+              })}
+              isInvalid={!!errors.email}
+              errorMessage={errors.email?.message}
               isDisabled={isLoading}
             />
             <Input
               label="Password"
               type="password"
               placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              isRequired
+              {...register("password", {
+                required: "Password is required",
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters",
+                },
+              })}
+              isInvalid={!!errors.password}
+              errorMessage={errors.password?.message}
               isDisabled={isLoading}
               description="Must be at least 8 characters"
             />
@@ -107,14 +126,16 @@ export default function RegisterPage() {
               label="Confirm Password"
               type="password"
               placeholder="Confirm your password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              isRequired
+              {...register("confirmPassword", {
+                required: "Please confirm your password",
+                validate: (value) =>
+                  value === password || "Passwords do not match",
+              })}
+              isInvalid={!!errors.confirmPassword}
+              errorMessage={errors.confirmPassword?.message}
               isDisabled={isLoading}
             />
-            {error && (
-              <p className="text-small text-danger">{error}</p>
-            )}
+            {error && <p className="text-small text-danger">{error}</p>}
             <Button
               type="submit"
               color="primary"

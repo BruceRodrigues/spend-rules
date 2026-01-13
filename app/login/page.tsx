@@ -1,36 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { Button, Card, CardBody, CardHeader, Input, Link } from "@heroui/react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Input,
-  Button,
-  Link,
-} from "@heroui/react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+
+type LoginFormData = {
+  email: string;
+  password: string;
+};
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>();
+
+  const onSubmit = async (data: LoginFormData) => {
     setError("");
     setIsLoading(true);
 
     try {
       const result = await signIn("credentials", {
-        email,
-        password,
+        email: data.email,
+        password: data.password,
         redirect: false,
       });
 
@@ -57,49 +59,46 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="flex flex-col items-start gap-2 pb-0">
           <h1 className="text-2xl font-bold">Sign In</h1>
-          <p className="text-small text-default-500">
-            Sign in to your account to continue
-          </p>
+          <p className="text-small text-default-500">Sign in to your account to continue</p>
         </CardHeader>
         <CardBody className="gap-4 pt-6">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <Input
               label="Email"
               type="email"
               placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              isRequired
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "Invalid email address",
+                },
+              })}
+              isInvalid={!!errors.email}
+              errorMessage={errors.email?.message}
               isDisabled={isLoading}
             />
             <Input
               label="Password"
               type="password"
               placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              isRequired
+              {...register("password", {
+                required: "Password is required",
+              })}
+              isInvalid={!!errors.password}
+              errorMessage={errors.password?.message}
               isDisabled={isLoading}
             />
-            {error && (
-              <p className="text-small text-danger">{error}</p>
-            )}
-            <Button
-              type="submit"
-              color="primary"
-              className="w-full"
-              isLoading={isLoading}
-            >
+            {error && <p className="text-small text-danger">{error}</p>}
+            <Button type="submit" color="primary" className="w-full" isLoading={isLoading}>
               Sign In
             </Button>
           </form>
 
           <div className="relative flex items-center py-2">
-            <div className="flex-grow border-t border-default-200"></div>
-            <span className="mx-4 flex-shrink text-small text-default-500">
-              OR
-            </span>
-            <div className="flex-grow border-t border-default-200"></div>
+            <div className="flex-grow border-t border-default-200" />
+            <span className="mx-4 flex-shrink text-small text-default-500">OR</span>
+            <div className="flex-grow border-t border-default-200" />
           </div>
 
           <Button
