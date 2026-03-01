@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@heroui/react";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import useSWR from "swr";
@@ -76,14 +77,13 @@ export default function RulesPage() {
     <div className="p-8">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-foreground">Rules</h1>
-        <button
-          type="button"
-          onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
+        <Button
+          color="primary"
+          startContent={<PlusIcon className="h-4 w-4" />}
+          onPress={() => setIsModalOpen(true)}
         >
-          <PlusIcon className="h-4 w-4" />
           Add Rule
-        </button>
+        </Button>
       </div>
 
       <div className="mt-6 flex flex-col gap-4">

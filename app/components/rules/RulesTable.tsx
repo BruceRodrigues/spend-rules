@@ -1,3 +1,4 @@
+import { Button } from "@heroui/react";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import type { Category, Rule } from "@prisma/client";
 import RuleRow from "./RuleRow";
@@ -95,25 +96,25 @@ export default function RulesTable({
             {total} rule{total !== 1 ? "s" : ""} total
           </p>
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => onPageChange(page - 1)}
-              disabled={page <= 1}
-              className="rounded-md border border-divider px-3 py-1.5 text-sm text-default-500 transition-colors hover:bg-default-100 disabled:cursor-not-allowed disabled:opacity-40"
+            <Button
+              variant="bordered"
+              size="sm"
+              isDisabled={page <= 1}
+              onPress={() => onPageChange(page - 1)}
             >
               ← Prev
-            </button>
+            </Button>
             <span className="text-sm text-default-500">
               Page {page} of {totalPages}
             </span>
-            <button
-              type="button"
-              onClick={() => onPageChange(page + 1)}
-              disabled={page >= totalPages}
-              className="rounded-md border border-divider px-3 py-1.5 text-sm text-default-500 transition-colors hover:bg-default-100 disabled:cursor-not-allowed disabled:opacity-40"
+            <Button
+              variant="bordered"
+              size="sm"
+              isDisabled={page >= totalPages}
+              onPress={() => onPageChange(page + 1)}
             >
               Next →
-            </button>
+            </Button>
           </div>
         </div>
       )}

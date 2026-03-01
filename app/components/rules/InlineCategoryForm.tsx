@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { Button, Input } from "@heroui/react";
 import { HexColorPicker } from "react-colorful";
 import { generateReadableColor } from "@/lib/colors";
 import type { Category } from "@prisma/client";
@@ -59,17 +60,13 @@ export default function InlineCategoryForm({
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-divider bg-content1 p-3">
-      <div className="flex flex-col gap-1">
-        <input
-          {...register("name", { required: "Name is required" })}
-          placeholder="Category name"
-          autoFocus
-          className="rounded-lg border border-divider bg-content1 px-3 py-2 text-sm text-foreground placeholder:text-default-400 focus:outline-none focus:ring-2 focus:ring-primary"
-        />
-        {errors.name && (
-          <p className="text-xs text-danger">{errors.name.message}</p>
-        )}
-      </div>
+      <Input
+        autoFocus
+        placeholder="Category name"
+        {...register("name", { required: "Name is required" })}
+        isInvalid={!!errors.name}
+        errorMessage={errors.name?.message}
+      />
 
       <div className="flex flex-col gap-2">
         <input
@@ -100,21 +97,17 @@ export default function InlineCategoryForm({
       {apiError && <p className="text-xs text-danger">{apiError}</p>}
 
       <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="rounded-lg border border-divider px-3 py-1.5 text-xs text-foreground hover:bg-default-100"
-        >
+        <Button variant="bordered" size="sm" onPress={onCancel}>
           Cancel
-        </button>
-        <button
-          type="button"
-          onClick={handleSubmit(onSubmit)}
-          disabled={isSubmitting}
-          className="rounded-lg bg-primary px-3 py-1.5 text-xs text-white hover:bg-primary/90 disabled:opacity-50"
+        </Button>
+        <Button
+          color="primary"
+          size="sm"
+          isLoading={isSubmitting}
+          onPress={handleSubmit(onSubmit)}
         >
-          {isSubmitting ? "Adding…" : "Add Category"}
-        </button>
+          Add Category
+        </Button>
       </div>
     </div>
   );

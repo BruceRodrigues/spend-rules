@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@heroui/react";
 import {
   AdjustmentsHorizontalIcon,
   ArrowUpTrayIcon,
@@ -76,13 +77,15 @@ export default function Sidebar({ user }: SidebarProps) {
   return (
     <>
       {/* Mobile hamburger */}
-      <button
-        className="fixed left-4 top-4 z-50 rounded-md p-2 text-default-500 hover:bg-default-100 hover:text-foreground lg:hidden"
-        onClick={() => setMobileOpen(true)}
+      <Button
+        isIconOnly
+        variant="light"
+        className="fixed left-4 top-4 z-50 lg:hidden"
+        onPress={() => setMobileOpen(true)}
         aria-label="Open sidebar"
       >
         <Bars3Icon className="h-6 w-6" />
-      </button>
+      </Button>
 
       {/* Mobile overlay */}
       {mobileOpen && (
@@ -98,13 +101,15 @@ export default function Sidebar({ user }: SidebarProps) {
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <button
-          className="absolute right-3 top-4 rounded-md p-1 text-default-400 hover:text-foreground"
-          onClick={() => setMobileOpen(false)}
+        <Button
+          isIconOnly
+          variant="light"
+          className="absolute right-3 top-4"
+          onPress={() => setMobileOpen(false)}
           aria-label="Close sidebar"
         >
           <XMarkIcon className="h-5 w-5" />
-        </button>
+        </Button>
         {sidebarContent}
       </aside>
 

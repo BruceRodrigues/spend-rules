@@ -7,6 +7,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
+  Input,
 } from "@heroui/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -93,30 +94,20 @@ export default function EditCategoryModal({
         <form onSubmit={handleSubmit(onSubmit)}>
           <ModalHeader className="text-foreground">Edit Category</ModalHeader>
           <ModalBody className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-foreground">
-                Name <span className="text-danger">*</span>
-              </label>
-              <input
-                {...register("name", { required: "Name is required" })}
-                placeholder="e.g. Groceries"
-                className="rounded-lg border border-divider bg-content1 px-3 py-2 text-sm text-foreground placeholder:text-default-400 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-              {errors.name && (
-                <p className="text-xs text-danger">{errors.name.message}</p>
-              )}
-            </div>
+            <Input
+              label="Name"
+              isRequired
+              placeholder="e.g. Groceries"
+              {...register("name", { required: "Name is required" })}
+              isInvalid={!!errors.name}
+              errorMessage={errors.name?.message}
+            />
 
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-foreground">
-                Description
-              </label>
-              <input
-                {...register("description")}
-                placeholder="Optional description"
-                className="rounded-lg border border-divider bg-content1 px-3 py-2 text-sm text-foreground placeholder:text-default-400 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
+            <Input
+              label="Description"
+              placeholder="Optional description"
+              {...register("description")}
+            />
 
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-foreground">

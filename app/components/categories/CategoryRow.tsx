@@ -1,3 +1,4 @@
+import { Button } from "@heroui/react";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import type { Category } from "@prisma/client";
 
@@ -45,22 +46,25 @@ export default function CategoryRow({
       <td className="px-4 py-3 text-sm text-default-500">{createdAt}</td>
       <td className="px-4 py-3">
         <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={() => onEdit(category)}
-            className="rounded-md p-1.5 text-default-400 transition-colors hover:bg-default-100 hover:text-default-600"
+          <Button
+            isIconOnly
+            variant="light"
+            size="sm"
+            onPress={() => onEdit(category)}
             aria-label="Edit category"
           >
             <PencilSquareIcon className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            onClick={() => onDelete(category)}
-            className="rounded-md p-1.5 text-default-400 transition-colors hover:bg-danger-50 hover:text-danger"
+          </Button>
+          <Button
+            isIconOnly
+            variant="light"
+            color="danger"
+            size="sm"
+            onPress={() => onDelete(category)}
             aria-label="Delete category"
           >
             <TrashIcon className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
       </td>
     </tr>

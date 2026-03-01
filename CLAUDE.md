@@ -33,6 +33,14 @@ The **page component** (`app/dashboard/{feature}/page.tsx`) acts as the containe
 - Filters: `{Feature}sFilters` (plural)
 - Modal: `Add{Feature}Modal`
 
+## UI Components
+
+- Always use HeroUI components (`<Button>`, `<Input>`, `<Select>`, etc.) over native `<button>`, `<input>`, `<select>` elements
+- HeroUI `<Input>` works with `react-hook-form` via `{...register(...)}` spread; use `label`, `isInvalid`, and `errorMessage` props instead of separate `<label>` and error `<p>` tags
+- HeroUI `<Select>` requires `Controller` from `react-hook-form` (does not support `register()` spread); use `selectedKeys` and `onSelectionChange`
+- Use `onPress` (react-aria) for button handlers; `isDisabled` instead of `disabled`; `isIconOnly` for icon-only buttons; `isLoading` for loading state
+- Exceptions — keep as native elements: `<input type="hidden">`, color-swatch circular `<button>` with dynamic `backgroundColor` style
+
 ## Code Clarity
 
 - Prefer clear, readable code over performatic solutions

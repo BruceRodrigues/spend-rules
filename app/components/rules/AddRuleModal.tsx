@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@heroui/react";
-import { useForm } from "react-hook-form";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Select, SelectItem } from "@heroui/react";
+import { useForm, Controller } from "react-hook-form";
 import type { Category } from "@prisma/client";
 import InlineCategoryForm from "./InlineCategoryForm";
 
@@ -41,6 +41,7 @@ export default function AddRuleModal({
     watch,
     reset,
     setValue,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<AddRuleFormValues>({
     defaultValues: {
@@ -92,27 +93,33 @@ export default function AddRuleModal({
     }
     return (
       <>
-        <select
-          {...register("categoryId", { required: "Category is required" })}
-          className="rounded-lg border border-divider bg-content1 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-        >
-          <option value="">Select a category…</option>
-          {allCategories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
-        <button
-          type="button"
-          onClick={() => setShowInlineForm(true)}
-          className="self-start text-xs text-primary hover:underline"
+        <Controller
+          name="categoryId"
+          control={control}
+          rules={{ required: "Category is required" }}
+          render={({ field, fieldState }) => (
+            <Select
+              label="Category"
+              isRequired
+              selectedKeys={field.value ? new Set([field.value]) : new Set()}
+              onSelectionChange={(keys) => field.onChange(Array.from(keys)[0] ?? "")}
+              isInvalid={!!fieldState.error}
+              errorMessage={fieldState.error?.message}
+            >
+              {allCategories.map((cat) => (
+                <SelectItem key={cat.id}>{cat.name}</SelectItem>
+              ))}
+            </Select>
+          )}
+        />
+        <Button
+          variant="light"
+          size="sm"
+          className="self-start"
+          onPress={() => setShowInlineForm(true)}
         >
           + New category
-        </button>
-        {errors.categoryId && (
-          <p className="text-xs text-danger">{errors.categoryId.message}</p>
-        )}
+        </Button>
       </>
     );
   }
@@ -124,54 +131,46 @@ export default function AddRuleModal({
           <ModalHeader className="text-foreground">Add Rule</ModalHeader>
           <ModalBody className="flex flex-col gap-4">
 
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-foreground">
-                Name <span className="text-danger">*</span>
-              </label>
-              <input
-                {...register("name", { required: "Name is required" })}
-                placeholder="e.g. Grocery stores"
-                className="rounded-lg border border-divider bg-content1 px-3 py-2 text-sm text-foreground placeholder:text-default-400 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-              {errors.name && (
-                <p className="text-xs text-danger">{errors.name.message}</p>
-              )}
-            </div>
+            <Input
+              label="Name"
+              isRequired
+              placeholder="e.g. Grocery stores"
+              {...register("name", { required: "Name is required" })}
+              isInvalid={!!errors.name}
+              errorMessage={errors.name?.message}
+            />
 
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-foreground">
-                Match Type
-              </label>
-              <select
-                {...register("matchType")}
-                className="rounded-lg border border-divider bg-content1 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="KEYWORD">Keyword</option>
-                <option value="REGEX">Regex</option>
-                <option value="EXACT">Exact</option>
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-foreground">
-                Pattern <span className="text-danger">*</span>
-              </label>
-              <input
-                {...register("pattern", { required: "Pattern is required" })}
-                placeholder={
-                  watchedMatchType === "REGEX"
-                    ? "e.g. (?i)supermarket.*"
-                    : "e.g. supermarket"
-                }
-                className="rounded-lg border border-divider bg-content1 px-3 py-2 text-sm text-foreground placeholder:text-default-400 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-              <p className="text-xs text-default-400">
-                {MATCH_TYPE_HELPER[watchedMatchType]}
-              </p>
-              {errors.pattern && (
-                <p className="text-xs text-danger">{errors.pattern.message}</p>
+            <Controller
+              name="matchType"
+              control={control}
+              render={({ field, fieldState }) => (
+                <Select
+                  label="Match Type"
+                  selectedKeys={field.value ? new Set([field.value]) : new Set()}
+                  onSelectionChange={(keys) => field.onChange(Array.from(keys)[0] ?? "KEYWORD")}
+                  isInvalid={!!fieldState.error}
+                  errorMessage={fieldState.error?.message}
+                >
+                  <SelectItem key="KEYWORD">Keyword</SelectItem>
+                  <SelectItem key="REGEX">Regex</SelectItem>
+                  <SelectItem key="EXACT">Exact</SelectItem>
+                </Select>
               )}
-            </div>
+            />
+
+            <Input
+              label="Pattern"
+              isRequired
+              placeholder={
+                watchedMatchType === "REGEX"
+                  ? "e.g. (?i)supermarket.*"
+                  : "e.g. supermarket"
+              }
+              description={MATCH_TYPE_HELPER[watchedMatchType]}
+              {...register("pattern", { required: "Pattern is required" })}
+              isInvalid={!!errors.pattern}
+              errorMessage={errors.pattern?.message}
+            />
 
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-foreground">

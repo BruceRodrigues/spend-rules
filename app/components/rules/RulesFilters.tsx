@@ -1,7 +1,8 @@
 "use client";
 
+import { Button, Input } from "@heroui/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import debounce from "lodash/debounce";
 import type { MatchType } from "@prisma/client";
 
@@ -47,31 +48,26 @@ export default function RulesFilters({
 
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-      <div className="relative flex-1">
-        <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-default-400" />
-        <input
-          type="text"
+      <div className="flex-1">
+        <Input
+          startContent={<MagnifyingGlassIcon className="h-4 w-4 text-default-400" />}
           value={inputValue}
           onChange={handleInputChange}
           placeholder="Search by name, pattern or category…"
-          className="w-full rounded-lg border border-divider bg-content1 py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-default-400 focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
 
       <div className="flex items-center gap-1 rounded-lg border border-divider bg-content1 p-1">
         {MATCH_TYPE_OPTIONS.map((option) => (
-          <button
+          <Button
             key={option.value}
-            type="button"
-            onClick={() => onMatchTypeChange(option.value)}
-            className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-              matchType === option.value
-                ? "bg-primary text-white"
-                : "text-default-500 hover:bg-default-100 hover:text-foreground"
-            }`}
+            size="sm"
+            variant={matchType === option.value ? "solid" : "light"}
+            color={matchType === option.value ? "primary" : "default"}
+            onPress={() => onMatchTypeChange(option.value)}
           >
             {option.label}
-          </button>
+          </Button>
         ))}
       </div>
     </div>
