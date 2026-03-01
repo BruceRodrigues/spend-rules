@@ -6,7 +6,7 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
 
   // Public routes
-  const publicRoutes = ["/login", "/register", "/verify-email", "/api/auth"];
+  const publicRoutes = ["/login", "/register", "/verify-email", "/reset-password", "/api/auth"];
   const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
 
   // If user is logged in and tries to access login/register, redirect to dashboard

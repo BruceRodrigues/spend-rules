@@ -16,6 +16,7 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const isVerified = searchParams.get("verified") === "true";
+  const isPasswordReset = searchParams.get("passwordReset") === "true";
 
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -69,6 +70,11 @@ export default function LoginPage() {
         <CardBody className="gap-4 pt-6">
           {isVerified && (
             <p className="text-small text-success">Email verified! You can now sign in.</p>
+          )}
+          {isPasswordReset && (
+            <p className="text-small text-success">
+              Your password has been reset. You can now sign in.
+            </p>
           )}
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <Input
