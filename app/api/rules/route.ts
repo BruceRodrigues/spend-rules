@@ -1,25 +1,55 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import type { MatchType, Prisma } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   try {
     const userId = await requireUserId();
 
-    const rules = await prisma.rule.findMany({
-      where: {
-        userId,
-      },
-      include: {
-        category: true,
-      },
-      orderBy: [
-        { priority: "desc" },
-        { createdAt: "desc" },
-      ],
-    });
+    const { searchParams } = request.nextUrl;
+    const search = searchParams.get("search") ?? "";
+    const matchTypeParam = searchParams.get("matchType");
+    const page = Math.max(1, Number(searchParams.get("page") ?? "1"));
+    const limit = Math.max(1, Number(searchParams.get("limit") ?? "50"));
 
-    return NextResponse.json(rules);
+    const validMatchTypes: MatchType[] = ["KEYWORD", "REGEX", "EXACT"];
+    const matchType =
+      matchTypeParam && validMatchTypes.includes(matchTypeParam as MatchType)
+        ? (matchTypeParam as MatchType)
+        : undefined;
+
+    const where: Prisma.RuleWhereInput = {
+      userId,
+      ...(matchType ? { matchType } : {}),
+      ...(search
+        ? {
+            OR: [
+              { name: { contains: search, mode: "insensitive" } },
+              { pattern: { contains: search, mode: "insensitive" } },
+              { category: { name: { contains: search, mode: "insensitive" } } },
+            ],
+          }
+        : {}),
+    };
+
+    const [rules, total] = await Promise.all([
+      prisma.rule.findMany({
+        where,
+        include: { category: true },
+        orderBy: [{ priority: "desc" }, { createdAt: "desc" }],
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.rule.count({ where }),
+    ]);
+
+    return NextResponse.json({
+      rules,
+      total,
+      page,
+      totalPages: Math.max(1, Math.ceil(total / limit)),
+    });
   } catch (error) {
     console.error("Error fetching rules:", error);
     return NextResponse.json(

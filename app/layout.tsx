@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body>
-        <HeroUIProvider defaultTheme="dark">{children}</HeroUIProvider>
+        <HeroUIProvider>{children}</HeroUIProvider>
       </body>
     </html>
   );

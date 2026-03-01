@@ -11,9 +11,9 @@ export default auth((req) => {
     pathname.startsWith(route),
   );
 
-  // If user is logged in and tries to access login/register, redirect to home
+  // If user is logged in and tries to access login/register, redirect to dashboard
   if (isLoggedIn && (pathname === "/login" || pathname === "/register")) {
-    return NextResponse.redirect(new URL("/", req.url));
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
   // If user is not logged in and tries to access protected route, redirect to login
