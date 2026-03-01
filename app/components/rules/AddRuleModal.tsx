@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import type { Category } from "@prisma/client";
+import InlineCategoryForm from "./InlineCategoryForm";
 
 interface AddRuleFormValues {
   name: string;
@@ -30,11 +32,15 @@ export default function AddRuleModal({
   onCreated,
   categories,
 }: AddRuleModalProps) {
+  const [showInlineForm, setShowInlineForm] = useState(false);
+  const [localCategories, setLocalCategories] = useState<Category[]>([]);
+
   const {
     register,
     handleSubmit,
     watch,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<AddRuleFormValues>({
     defaultValues: {
@@ -46,6 +52,7 @@ export default function AddRuleModal({
   });
 
   const watchedMatchType = watch("matchType");
+  const allCategories = [...categories, ...localCategories];
 
   async function onSubmit(data: AddRuleFormValues) {
     const response = await fetch("/api/rules", {
@@ -57,13 +64,57 @@ export default function AddRuleModal({
     if (!response.ok) return;
 
     reset();
+    setShowInlineForm(false);
+    setLocalCategories([]);
     onCreated();
     onClose();
   }
 
   function handleClose() {
     reset();
+    setShowInlineForm(false);
+    setLocalCategories([]);
     onClose();
+  }
+
+  function renderCategoryField() {
+    if (showInlineForm) {
+      return (
+        <InlineCategoryForm
+          onCreated={(category) => {
+            setLocalCategories((prev) => [...prev, category]);
+            setValue("categoryId", category.id, { shouldValidate: true });
+            setShowInlineForm(false);
+          }}
+          onCancel={() => setShowInlineForm(false)}
+        />
+      );
+    }
+    return (
+      <>
+        <select
+          {...register("categoryId", { required: "Category is required" })}
+          className="rounded-lg border border-divider bg-content1 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          <option value="">Select a category…</option>
+          {allCategories.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
+        <button
+          type="button"
+          onClick={() => setShowInlineForm(true)}
+          className="self-start text-xs text-primary hover:underline"
+        >
+          + New category
+        </button>
+        {errors.categoryId && (
+          <p className="text-xs text-danger">{errors.categoryId.message}</p>
+        )}
+      </>
+    );
   }
 
   return (
@@ -126,20 +177,7 @@ export default function AddRuleModal({
               <label className="text-sm font-medium text-foreground">
                 Category <span className="text-danger">*</span>
               </label>
-              <select
-                {...register("categoryId", { required: "Category is required" })}
-                className="rounded-lg border border-divider bg-content1 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="">Select a category…</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-              {errors.categoryId && (
-                <p className="text-xs text-danger">{errors.categoryId.message}</p>
-              )}
+              {renderCategoryField()}
             </div>
 
           </ModalBody>

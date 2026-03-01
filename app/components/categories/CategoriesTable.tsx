@@ -11,12 +11,14 @@ interface CategoriesTableProps {
   page: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  onEdit: (category: CategoryWithCount) => void;
+  onDelete: (category: CategoryWithCount) => void;
 }
 
 function SkeletonRow() {
   return (
     <tr className="border-b border-divider">
-      {Array.from({ length: 4 }).map((_, i) => (
+      {Array.from({ length: 5 }).map((_, i) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: static skeleton
         <td key={i} className="px-4 py-3">
           <div className="h-4 animate-pulse rounded bg-default-200" />
@@ -29,7 +31,7 @@ function SkeletonRow() {
 function EmptyState() {
   return (
     <tr>
-      <td colSpan={4} className="px-4 py-16 text-center">
+      <td colSpan={5} className="px-4 py-16 text-center">
         <TagIcon className="mx-auto mb-3 h-10 w-10 text-default-300" />
         <p className="text-sm font-medium text-default-500">
           No categories found
@@ -42,7 +44,7 @@ function EmptyState() {
   );
 }
 
-const TABLE_HEADERS = ["Name", "Description", "Rules", "Created"];
+const TABLE_HEADERS = ["Name", "Description", "Rules", "Created", "Actions"];
 
 export default function CategoriesTable({
   categories,
@@ -51,6 +53,8 @@ export default function CategoriesTable({
   page,
   totalPages,
   onPageChange,
+  onEdit,
+  onDelete,
 }: CategoriesTableProps) {
   return (
     <div className="flex flex-col gap-0">
@@ -79,7 +83,12 @@ export default function CategoriesTable({
               <EmptyState />
             ) : (
               categories.map((category) => (
-                <CategoryRow key={category.id} category={category} />
+                <CategoryRow
+                  key={category.id}
+                  category={category}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                />
               ))
             )}
           </tbody>

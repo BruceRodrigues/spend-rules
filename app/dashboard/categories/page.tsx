@@ -7,6 +7,8 @@ import type { Category } from "@prisma/client";
 import CategoriesFilters from "@/app/components/categories/CategoriesFilters";
 import CategoriesTable from "@/app/components/categories/CategoriesTable";
 import AddCategoryModal from "@/app/components/categories/AddCategoryModal";
+import EditCategoryModal from "@/app/components/categories/EditCategoryModal";
+import DeleteCategoryModal from "@/app/components/categories/DeleteCategoryModal";
 
 type CategoryWithCount = Category & { _count: { rules: number } };
 
@@ -33,7 +35,9 @@ function buildCategoriesUrl(search: string, page: number): string {
 export default function CategoriesPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [categoryToEdit, setCategoryToEdit] = useState<CategoryWithCount | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<CategoryWithCount | null>(null);
 
   const categoriesUrl = buildCategoriesUrl(search, page);
 
@@ -52,13 +56,21 @@ export default function CategoriesPage() {
     mutate();
   }
 
+  function handleCategoryUpdated() {
+    mutate();
+  }
+
+  function handleCategoryDeleted() {
+    mutate();
+  }
+
   return (
     <div className="p-8">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-foreground">Categories</h1>
         <button
           type="button"
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => setIsAddModalOpen(true)}
           className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
         >
           <PlusIcon className="h-4 w-4" />
@@ -79,13 +91,29 @@ export default function CategoriesPage() {
           page={categoriesData?.page ?? page}
           totalPages={categoriesData?.totalPages ?? 1}
           onPageChange={setPage}
+          onEdit={setCategoryToEdit}
+          onDelete={setCategoryToDelete}
         />
       </div>
 
       <AddCategoryModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
         onCreated={handleCategoryCreated}
+      />
+
+      <EditCategoryModal
+        isOpen={categoryToEdit !== null}
+        onClose={() => setCategoryToEdit(null)}
+        onUpdated={handleCategoryUpdated}
+        category={categoryToEdit}
+      />
+
+      <DeleteCategoryModal
+        isOpen={categoryToDelete !== null}
+        onClose={() => setCategoryToDelete(null)}
+        onDeleted={handleCategoryDeleted}
+        category={categoryToDelete}
       />
     </div>
   );
