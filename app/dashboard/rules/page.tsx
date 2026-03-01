@@ -20,6 +20,10 @@ interface RulesResponse {
   totalPages: number;
 }
 
+interface CategoriesListResponse {
+  categories: Category[];
+}
+
 async function fetcher<T>(url: string): Promise<T> {
   const response = await fetch(url);
   if (!response.ok) throw new Error("Failed to fetch");
@@ -52,7 +56,7 @@ export default function RulesPage() {
     mutate: mutateRules,
   } = useSWR<RulesResponse>(rulesUrl, fetcher);
 
-  const { data: categories } = useSWR<Category[]>("/api/categories", fetcher);
+  const { data: categoriesData } = useSWR<CategoriesListResponse>("/api/categories?limit=500", fetcher);
 
   function handleSearchChange(value: string) {
     setSearch(value);
@@ -104,7 +108,7 @@ export default function RulesPage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onCreated={handleRuleCreated}
-        categories={categories ?? []}
+        categories={categoriesData?.categories ?? []}
       />
     </div>
   );

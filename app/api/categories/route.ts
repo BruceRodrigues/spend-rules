@@ -6,16 +6,41 @@ export async function GET(request: NextRequest) {
   try {
     const userId = await requireUserId();
 
-    const categories = await prisma.category.findMany({
-      where: {
-        userId,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    const { searchParams } = request.nextUrl;
+    const search = searchParams.get("search") ?? "";
+    const page = Math.max(1, Number(searchParams.get("page") ?? "1"));
+    const limit = Math.max(1, Number(searchParams.get("limit") ?? "50"));
+    const skip = (page - 1) * limit;
 
-    return NextResponse.json(categories);
+    const where = {
+      userId,
+      ...(search
+        ? {
+            OR: [
+              { name: { contains: search, mode: "insensitive" as const } },
+              { description: { contains: search, mode: "insensitive" as const } },
+            ],
+          }
+        : {}),
+    };
+
+    const [categories, total] = await Promise.all([
+      prisma.category.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+        include: { _count: { select: { rules: true } } },
+      }),
+      prisma.category.count({ where }),
+    ]);
+
+    return NextResponse.json({
+      categories,
+      total,
+      page,
+      totalPages: Math.max(1, Math.ceil(total / limit)),
+    });
   } catch (error) {
     console.error("Error fetching categories:", error);
     return NextResponse.json(
