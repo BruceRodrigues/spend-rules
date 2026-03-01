@@ -15,6 +15,7 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const isVerified = searchParams.get("verified") === "true";
 
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +38,11 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        setError("Invalid email or password");
+        if (result.code === "email_not_verified") {
+          setError("Please verify your email address before signing in. Check your inbox.");
+        } else {
+          setError("Invalid email or password");
+        }
         setIsLoading(false);
       } else {
         router.push(callbackUrl);
@@ -62,6 +67,9 @@ export default function LoginPage() {
           <p className="text-small text-default-500">Sign in to your account to continue</p>
         </CardHeader>
         <CardBody className="gap-4 pt-6">
+          {isVerified && (
+            <p className="text-small text-success">Email verified! You can now sign in.</p>
+          )}
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <Input
               label="Email"

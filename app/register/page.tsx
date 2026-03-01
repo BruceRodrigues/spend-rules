@@ -9,7 +9,6 @@ type RegisterFormData = {
   name: string;
   email: string;
   password: string;
-  confirmPassword: string;
 };
 
 export default function RegisterPage() {
@@ -20,11 +19,8 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<RegisterFormData>();
-
-  const password = watch("password");
 
   const onSubmit = async (data: RegisterFormData) => {
     setError("");
@@ -51,7 +47,7 @@ export default function RegisterPage() {
         return;
       }
 
-      router.push("/login?registered=true");
+      router.push("/verify-email");
     } catch (err) {
       setError("An error occurred. Please try again.");
       setIsLoading(false);
@@ -112,18 +108,6 @@ export default function RegisterPage() {
               errorMessage={errors.password?.message}
               isDisabled={isLoading}
               description="Must be at least 8 characters"
-            />
-            <Input
-              label="Confirm Password"
-              type="password"
-              placeholder="Confirm your password"
-              {...register("confirmPassword", {
-                required: "Please confirm your password",
-                validate: (value) => value === password || "Passwords do not match",
-              })}
-              isInvalid={!!errors.confirmPassword}
-              errorMessage={errors.confirmPassword?.message}
-              isDisabled={isLoading}
             />
             {error && <p className="text-small text-danger">{error}</p>}
             <Button type="submit" color="primary" className="w-full" isLoading={isLoading}>

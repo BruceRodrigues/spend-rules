@@ -1,3 +1,5 @@
+import { randomBytes } from "node:crypto";
+import { sendVerificationEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 import { hash } from "bcryptjs";
 import { type NextRequest, NextResponse } from "next/server";
@@ -39,7 +41,25 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ message: "User created successfully" }, { status: 201 });
+    // Create email verification token (expires in 24 hours)
+    const token = randomBytes(32).toString("hex");
+    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    await prisma.verificationToken.create({
+      data: {
+        identifier: email,
+        token,
+        expires,
+      },
+    });
+
+    // Send verification email
+    await sendVerificationEmail(email, token);
+
+    return NextResponse.json(
+      { message: "Account created. Please check your email to verify your account." },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Registration error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

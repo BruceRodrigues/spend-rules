@@ -21,6 +21,25 @@ GOOGLE_CLIENT_ID="your-google-client-id"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"
 ```
 
+## Email (Resend)
+
+```env
+# Resend API Key — get yours at https://resend.com
+RESEND_API_KEY="re_your_api_key_here"
+
+# Sender address (must be a verified domain in Resend)
+EMAIL_FROM="no-reply@yourdomain.com"
+```
+
+> **Note:** `NEXTAUTH_URL` (same value as `AUTH_URL`) is used to build the verification link in emails. Make sure it is set correctly in production.
+
+## Setting up Resend
+
+1. Create a free account at [resend.com](https://resend.com) (3,000 emails/month, 100/day)
+2. Go to **API Keys** and create a new key
+3. Go to **Domains** and add + verify your sending domain
+4. Set `EMAIL_FROM` to an address on that verified domain
+
 ## Generating AUTH_SECRET
 
 You can generate a secure secret key using:
