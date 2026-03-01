@@ -1,3 +1,4 @@
+import SWRProvider from "@/app/components/SWRProvider";
 import { HeroUIProvider } from "@heroui/react";
 import type { Metadata } from "next";
 import "./globals.css";
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body>
-        <HeroUIProvider>{children}</HeroUIProvider>
+        <HeroUIProvider>
+          <SWRProvider>{children}</SWRProvider>
+        </HeroUIProvider>
       </body>
     </html>
   );

@@ -19,12 +19,6 @@ interface CategoriesResponse {
   totalPages: number;
 }
 
-async function fetcher<T>(url: string): Promise<T> {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error("Failed to fetch");
-  return response.json() as Promise<T>;
-}
-
 function buildCategoriesUrl(search: string, page: number): string {
   const params = new URLSearchParams();
   if (search) params.set("search", search);
@@ -45,7 +39,7 @@ export default function CategoriesPage() {
     data: categoriesData,
     isLoading,
     mutate,
-  } = useSWR<CategoriesResponse>(categoriesUrl, fetcher);
+  } = useSWR<CategoriesResponse>(categoriesUrl);
 
   function handleSearchChange(value: string) {
     setSearch(value);

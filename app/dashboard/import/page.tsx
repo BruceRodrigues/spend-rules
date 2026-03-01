@@ -21,12 +21,6 @@ interface RulesResponse {
   total: number;
 }
 
-async function fetcher<T>(url: string): Promise<T> {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error("Failed to fetch");
-  return response.json() as Promise<T>;
-}
-
 export default function ImportPage() {
   const [step, setStep] = useState<ImportStep>("upload");
   const [parsedFile, setParsedFile] = useState<ParsedFile | null>(null);
@@ -40,12 +34,10 @@ export default function ImportPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const { data: creditCardsData, mutate: mutateCreditCards } = useSWR<CreditCardsResponse>(
-    "/api/credit-cards",
-    fetcher
-  );
+  const { data: creditCardsData, mutate: mutateCreditCards } =
+    useSWR<CreditCardsResponse>("/api/credit-cards");
 
-  const { data: rulesData } = useSWR<RulesResponse>("/api/rules?limit=1&isActive=true", fetcher);
+  const { data: rulesData } = useSWR<RulesResponse>("/api/rules?limit=1&isActive=true");
 
   const creditCards = creditCardsData?.creditCards ?? [];
   const hasRules = (rulesData?.total ?? 0) > 0;

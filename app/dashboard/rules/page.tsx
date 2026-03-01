@@ -26,12 +26,6 @@ interface CategoriesListResponse {
   categories: Category[];
 }
 
-async function fetcher<T>(url: string): Promise<T> {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error("Failed to fetch");
-  return response.json() as Promise<T>;
-}
-
 function buildRulesUrl(search: string, matchType: MatchTypeFilter, page: number): string {
   const params = new URLSearchParams();
   if (search) params.set("search", search);
@@ -54,12 +48,9 @@ export default function RulesPage() {
     data: rulesData,
     isLoading: rulesLoading,
     mutate: mutateRules,
-  } = useSWR<RulesResponse>(rulesUrl, fetcher);
+  } = useSWR<RulesResponse>(rulesUrl);
 
-  const { data: categoriesData } = useSWR<CategoriesListResponse>(
-    "/api/categories?limit=500",
-    fetcher
-  );
+  const { data: categoriesData } = useSWR<CategoriesListResponse>("/api/categories?limit=500");
 
   function handleSearchChange(value: string) {
     setSearch(value);
