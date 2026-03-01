@@ -1,19 +1,19 @@
 "use client";
 
+import { generateReadableColor } from "@/lib/colors";
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Button,
   Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
 } from "@heroui/react";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { HexColorPicker } from "react-colorful";
 import type { Category } from "@prisma/client";
-import { generateReadableColor } from "@/lib/colors";
+import { useEffect, useState } from "react";
+import { HexColorPicker } from "react-colorful";
+import { useForm } from "react-hook-form";
 
 type CategoryWithCount = Category & { _count: { rules: number } };
 
@@ -30,12 +30,7 @@ interface CategoryModalProps {
   category?: CategoryWithCount | null;
 }
 
-export default function CategoryModal({
-  isOpen,
-  onClose,
-  onSaved,
-  category,
-}: CategoryModalProps) {
+export default function CategoryModal({ isOpen, onClose, onSaved, category }: CategoryModalProps) {
   const isEditing = category != null;
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
@@ -70,9 +65,7 @@ export default function CategoryModal({
   }, [isOpen, category, isEditing, reset, setValue]);
 
   async function onSubmit(data: CategoryFormValues) {
-    const url = isEditing
-      ? `/api/categories/${category.id}`
-      : "/api/categories";
+    const url = isEditing ? `/api/categories/${category.id}` : "/api/categories";
     const method = isEditing ? "PATCH" : "POST";
 
     const response = await fetch(url, {
@@ -125,10 +118,7 @@ export default function CategoryModal({
               <label className="text-sm font-medium text-foreground">
                 Color <span className="text-danger">*</span>
               </label>
-              <input
-                type="hidden"
-                {...register("color", { required: "Color is required" })}
-              />
+              <input type="hidden" {...register("color", { required: "Color is required" })} />
               <div className="flex items-center gap-3">
                 <button
                   type="button"
@@ -137,24 +127,18 @@ export default function CategoryModal({
                   style={{ backgroundColor: watchedColor }}
                   aria-label="Toggle color picker"
                 />
-                <span className="font-mono text-sm text-default-500">
-                  {watchedColor}
-                </span>
+                <span className="font-mono text-sm text-default-500">{watchedColor}</span>
               </div>
               {isPickerOpen && (
                 <div className="mt-2">
                   <HexColorPicker
                     color={watchedColor}
-                    onChange={(hex) =>
-                      setValue("color", hex, { shouldValidate: true })
-                    }
+                    onChange={(hex) => setValue("color", hex, { shouldValidate: true })}
                     style={{ width: "100%" }}
                   />
                 </div>
               )}
-              {errors.color && (
-                <p className="text-xs text-danger">{errors.color.message}</p>
-              )}
+              {errors.color && <p className="text-xs text-danger">{errors.color.message}</p>}
             </div>
           </ModalBody>
           <ModalFooter>

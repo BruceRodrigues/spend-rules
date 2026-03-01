@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { Button, Input } from "@heroui/react";
-import { HexColorPicker } from "react-colorful";
 import { generateReadableColor } from "@/lib/colors";
+import { Button, Input } from "@heroui/react";
 import type { Category } from "@prisma/client";
+import { useEffect, useState } from "react";
+import { HexColorPicker } from "react-colorful";
+import { useForm } from "react-hook-form";
 
 interface InlineCategoryFormValues {
   name: string;
@@ -17,10 +17,7 @@ interface InlineCategoryFormProps {
   onCancel: () => void;
 }
 
-export default function InlineCategoryForm({
-  onCreated,
-  onCancel,
-}: InlineCategoryFormProps) {
+export default function InlineCategoryForm({ onCreated, onCancel }: InlineCategoryFormProps) {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
@@ -69,10 +66,7 @@ export default function InlineCategoryForm({
       />
 
       <div className="flex flex-col gap-2">
-        <input
-          type="hidden"
-          {...register("color", { required: "Color is required" })}
-        />
+        <input type="hidden" {...register("color", { required: "Color is required" })} />
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -81,9 +75,7 @@ export default function InlineCategoryForm({
             style={{ backgroundColor: watchedColor }}
             aria-label="Toggle color picker"
           />
-          <span className="font-mono text-sm text-default-500">
-            {watchedColor}
-          </span>
+          <span className="font-mono text-sm text-default-500">{watchedColor}</span>
         </div>
         {isPickerOpen && (
           <HexColorPicker
@@ -100,12 +92,7 @@ export default function InlineCategoryForm({
         <Button variant="bordered" size="sm" onPress={onCancel}>
           Cancel
         </Button>
-        <Button
-          color="primary"
-          size="sm"
-          isLoading={isSubmitting}
-          onPress={handleSubmit(onSubmit)}
-        >
+        <Button color="primary" size="sm" isLoading={isSubmitting} onPress={handleSubmit(onSubmit)}>
           Add Category
         </Button>
       </div>

@@ -1,10 +1,10 @@
 "use client";
 
-import { Button, Input } from "@heroui/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useCallback, useEffect, useState } from "react";
-import debounce from "lodash/debounce";
+import { Button, Input } from "@heroui/react";
 import type { MatchType } from "@prisma/client";
+import debounce from "lodash/debounce";
+import { useCallback, useEffect, useState } from "react";
 
 type MatchTypeFilter = MatchType | "ALL";
 
@@ -32,7 +32,7 @@ export default function RulesFilters({
 
   const debouncedOnSearchChange = useCallback(
     debounce((value: string) => onSearchChange(value), 300),
-    [onSearchChange],
+    [onSearchChange]
   );
 
   // Keep local input in sync when parent resets search

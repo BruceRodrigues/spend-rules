@@ -1,14 +1,14 @@
 "use client";
 
-import { Button } from "@heroui/react";
-import { PlusIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
-import useSWR from "swr";
-import type { Category } from "@prisma/client";
 import CategoriesFilters from "@/app/components/categories/CategoriesFilters";
 import CategoriesTable from "@/app/components/categories/CategoriesTable";
 import CategoryModal from "@/app/components/categories/CategoryModal";
 import DeleteCategoryModal from "@/app/components/categories/DeleteCategoryModal";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { Button } from "@heroui/react";
+import type { Category } from "@prisma/client";
+import { useState } from "react";
+import useSWR from "swr";
 
 type CategoryWithCount = Category & { _count: { rules: number } };
 
@@ -74,10 +74,7 @@ export default function CategoriesPage() {
       </div>
 
       <div className="mt-6 flex flex-col gap-4">
-        <CategoriesFilters
-          search={search}
-          onSearchChange={handleSearchChange}
-        />
+        <CategoriesFilters search={search} onSearchChange={handleSearchChange} />
 
         <CategoriesTable
           categories={categoriesData?.categories ?? []}
@@ -93,7 +90,10 @@ export default function CategoriesPage() {
 
       <CategoryModal
         isOpen={isAddModalOpen || categoryToEdit !== null}
-        onClose={() => { setIsAddModalOpen(false); setCategoryToEdit(null); }}
+        onClose={() => {
+          setIsAddModalOpen(false);
+          setCategoryToEdit(null);
+        }}
         onSaved={handleCategorySaved}
         category={categoryToEdit}
       />

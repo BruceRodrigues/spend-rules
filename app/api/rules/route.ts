@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
 import { requireUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import type { MatchType, Prisma } from "@prisma/client";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
@@ -52,10 +52,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error fetching rules:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -68,7 +65,7 @@ export async function POST(request: NextRequest) {
     if (!categoryId || !name || !pattern) {
       return NextResponse.json(
         { error: "Category ID, name, and pattern are required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -81,10 +78,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!category) {
-      return NextResponse.json(
-        { error: "Category not found" },
-        { status: 404 },
-      );
+      return NextResponse.json({ error: "Category not found" }, { status: 404 });
     }
 
     const rule = await prisma.rule.create({
@@ -105,9 +99,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(rule, { status: 201 });
   } catch (error) {
     console.error("Error creating rule:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

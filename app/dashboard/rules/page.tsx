@@ -1,14 +1,15 @@
 "use client";
 
-import { Button } from "@heroui/react";
-import { PlusIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
-import useSWR from "swr";
-import type { Category, Rule } from "@prisma/client";
+import DeleteRuleModal from "@/app/components/rules/DeleteRuleModal";
+import RuleModal from "@/app/components/rules/RuleModal";
 import RulesFilters from "@/app/components/rules/RulesFilters";
 import RulesTable from "@/app/components/rules/RulesTable";
-import AddRuleModal from "@/app/components/rules/AddRuleModal";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { Button } from "@heroui/react";
+import type { Category, Rule } from "@prisma/client";
 import type { MatchType } from "@prisma/client";
+import { useState } from "react";
+import useSWR from "swr";
 
 type MatchTypeFilter = MatchType | "ALL";
 
@@ -31,11 +32,7 @@ async function fetcher<T>(url: string): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-function buildRulesUrl(
-  search: string,
-  matchType: MatchTypeFilter,
-  page: number,
-): string {
+function buildRulesUrl(search: string, matchType: MatchTypeFilter, page: number): string {
   const params = new URLSearchParams();
   if (search) params.set("search", search);
   if (matchType !== "ALL") params.set("matchType", matchType);
@@ -48,6 +45,8 @@ export default function RulesPage() {
   const [matchType, setMatchType] = useState<MatchTypeFilter>("ALL");
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [ruleToEdit, setRuleToEdit] = useState<RuleWithCategory | null>(null);
+  const [ruleToDelete, setRuleToDelete] = useState<RuleWithCategory | null>(null);
 
   const rulesUrl = buildRulesUrl(search, matchType, page);
 
@@ -57,7 +56,10 @@ export default function RulesPage() {
     mutate: mutateRules,
   } = useSWR<RulesResponse>(rulesUrl, fetcher);
 
-  const { data: categoriesData } = useSWR<CategoriesListResponse>("/api/categories?limit=500", fetcher);
+  const { data: categoriesData } = useSWR<CategoriesListResponse>(
+    "/api/categories?limit=500",
+    fetcher
+  );
 
   function handleSearchChange(value: string) {
     setSearch(value);
@@ -69,7 +71,11 @@ export default function RulesPage() {
     setPage(1);
   }
 
-  function handleRuleCreated() {
+  function handleRuleSaved() {
+    mutateRules();
+  }
+
+  function handleRuleDeleted() {
     mutateRules();
   }
 
@@ -101,14 +107,24 @@ export default function RulesPage() {
           page={rulesData?.page ?? page}
           totalPages={rulesData?.totalPages ?? 1}
           onPageChange={setPage}
+          onEdit={setRuleToEdit}
+          onDelete={setRuleToDelete}
         />
       </div>
 
-      <AddRuleModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onCreated={handleRuleCreated}
+      <RuleModal
+        isOpen={isModalOpen || ruleToEdit !== null}
+        onClose={() => { setIsModalOpen(false); setRuleToEdit(null); }}
+        onSaved={handleRuleSaved}
         categories={categoriesData?.categories ?? []}
+        rule={ruleToEdit}
+      />
+
+      <DeleteRuleModal
+        isOpen={ruleToDelete !== null}
+        onClose={() => setRuleToDelete(null)}
+        onDeleted={handleRuleDeleted}
+        rule={ruleToDelete}
       />
     </div>
   );

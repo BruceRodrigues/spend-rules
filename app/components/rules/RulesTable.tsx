@@ -1,5 +1,5 @@
-import { Button } from "@heroui/react";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
+import { Button } from "@heroui/react";
 import type { Category, Rule } from "@prisma/client";
 import RuleRow from "./RuleRow";
 
@@ -12,12 +12,14 @@ interface RulesTableProps {
   page: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  onEdit: (rule: RuleWithCategory) => void;
+  onDelete: (rule: RuleWithCategory) => void;
 }
 
 function SkeletonRow() {
   return (
     <tr className="border-b border-divider">
-      {Array.from({ length: 6 }).map((_, i) => (
+      {Array.from({ length: 7 }).map((_, i) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: static skeleton
         <td key={i} className="px-4 py-3">
           <div className="h-4 animate-pulse rounded bg-default-200" />
@@ -30,7 +32,7 @@ function SkeletonRow() {
 function EmptyState() {
   return (
     <tr>
-      <td colSpan={6} className="px-4 py-16 text-center">
+      <td colSpan={7} className="px-4 py-16 text-center">
         <AdjustmentsHorizontalIcon className="mx-auto mb-3 h-10 w-10 text-default-300" />
         <p className="text-sm font-medium text-default-500">No rules found</p>
         <p className="mt-1 text-xs text-default-400">
@@ -41,14 +43,7 @@ function EmptyState() {
   );
 }
 
-const TABLE_HEADERS = [
-  "Name",
-  "Pattern",
-  "Match Type",
-  "Category",
-  "Priority",
-  "Status",
-];
+const TABLE_HEADERS = ["Name", "Pattern", "Match Type", "Category", "Priority", "Status", "Actions"];
 
 export default function RulesTable({
   rules,
@@ -57,6 +52,8 @@ export default function RulesTable({
   page,
   totalPages,
   onPageChange,
+  onEdit,
+  onDelete,
 }: RulesTableProps) {
   return (
     <div className="flex flex-col gap-0">
@@ -84,7 +81,7 @@ export default function RulesTable({
             ) : rules.length === 0 ? (
               <EmptyState />
             ) : (
-              rules.map((rule) => <RuleRow key={rule.id} rule={rule} />)
+              rules.map((rule) => <RuleRow key={rule.id} rule={rule} onEdit={onEdit} onDelete={onDelete} />)
             )}
           </tbody>
         </table>

@@ -1,31 +1,31 @@
 "use client";
 
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/react";
-import type { Category } from "@prisma/client";
+import type { Category, Rule } from "@prisma/client";
 import { useState } from "react";
 
-type CategoryWithCount = Category & { _count: { rules: number } };
+type RuleWithCategory = Rule & { category: Category };
 
-interface DeleteCategoryModalProps {
+interface DeleteRuleModalProps {
   isOpen: boolean;
   onClose: () => void;
   onDeleted: () => void;
-  category: CategoryWithCount | null;
+  rule: RuleWithCategory | null;
 }
 
-export default function DeleteCategoryModal({
+export default function DeleteRuleModal({
   isOpen,
   onClose,
   onDeleted,
-  category,
-}: DeleteCategoryModalProps) {
+  rule,
+}: DeleteRuleModalProps) {
   const [isDeleting, setIsDeleting] = useState(false);
 
   async function handleConfirm() {
-    if (!category) return;
+    if (!rule) return;
 
     setIsDeleting(true);
-    const response = await fetch(`/api/categories/${category.id}`, {
+    const response = await fetch(`/api/rules/${rule.id}`, {
       method: "DELETE",
     });
     setIsDeleting(false);
@@ -39,12 +39,11 @@ export default function DeleteCategoryModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="sm">
       <ModalContent>
-        <ModalHeader className="text-foreground">Delete Category</ModalHeader>
+        <ModalHeader className="text-foreground">Delete Rule</ModalHeader>
         <ModalBody>
           <p className="text-sm text-default-600">
             Are you sure you want to delete{" "}
-            <strong className="text-foreground">{category?.name}</strong>? This action cannot be
-            undone.
+            <strong className="text-foreground">{rule?.name}</strong>? This action cannot be undone.
           </p>
         </ModalBody>
         <ModalFooter>

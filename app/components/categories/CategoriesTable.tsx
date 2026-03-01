@@ -1,5 +1,5 @@
-import { Button } from "@heroui/react";
 import { TagIcon } from "@heroicons/react/24/outline";
+import { Button } from "@heroui/react";
 import type { Category } from "@prisma/client";
 import CategoryRow from "./CategoryRow";
 
@@ -34,9 +34,7 @@ function EmptyState() {
     <tr>
       <td colSpan={5} className="px-4 py-16 text-center">
         <TagIcon className="mx-auto mb-3 h-10 w-10 text-default-300" />
-        <p className="text-sm font-medium text-default-500">
-          No categories found
-        </p>
+        <p className="text-sm font-medium text-default-500">No categories found</p>
         <p className="mt-1 text-xs text-default-400">
           Add a category or adjust your filters to see results.
         </p>

@@ -1,16 +1,9 @@
 "use client";
 
+import { Button, Card, CardBody, CardHeader, Input, Link } from "@heroui/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Input,
-  Button,
-  Link,
-} from "@heroui/react";
 
 type RegisterFormData = {
   name: string;
@@ -70,9 +63,7 @@ export default function RegisterPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="flex flex-col items-start gap-2 pb-0">
           <h1 className="text-2xl font-bold">Create Account</h1>
-          <p className="text-small text-default-500">
-            Sign up to get started with Spend Rules
-          </p>
+          <p className="text-small text-default-500">Sign up to get started with Spend Rules</p>
         </CardHeader>
         <CardBody className="gap-4 pt-6">
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -128,20 +119,14 @@ export default function RegisterPage() {
               placeholder="Confirm your password"
               {...register("confirmPassword", {
                 required: "Please confirm your password",
-                validate: (value) =>
-                  value === password || "Passwords do not match",
+                validate: (value) => value === password || "Passwords do not match",
               })}
               isInvalid={!!errors.confirmPassword}
               errorMessage={errors.confirmPassword?.message}
               isDisabled={isLoading}
             />
             {error && <p className="text-small text-danger">{error}</p>}
-            <Button
-              type="submit"
-              color="primary"
-              className="w-full"
-              isLoading={isLoading}
-            >
+            <Button type="submit" color="primary" className="w-full" isLoading={isLoading}>
               Create Account
             </Button>
           </form>

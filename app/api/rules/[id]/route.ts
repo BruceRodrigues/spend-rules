@@ -11,25 +11,26 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const userId = await requireUserId();
     const { id } = await params;
     const body = await request.json();
-    const { name, description, color } = body;
+    const { name, pattern, matchType, categoryId, priority, isActive } = body;
 
     if (!name) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 });
     }
 
-    const existing = await prisma.category.findFirst({ where: { id, userId } });
+    const existing = await prisma.rule.findFirst({ where: { id, userId } });
     if (!existing) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    const category = await prisma.category.update({
+    const rule = await prisma.rule.update({
       where: { id },
-      data: { name, description, color },
+      data: { name, pattern, matchType, categoryId, priority, isActive },
+      include: { category: true },
     });
 
-    return NextResponse.json(category);
+    return NextResponse.json(rule);
   } catch (error) {
-    console.error("Error updating category:", error);
+    console.error("Error updating rule:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -39,16 +40,16 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     const userId = await requireUserId();
     const { id } = await params;
 
-    const existing = await prisma.category.findFirst({ where: { id, userId } });
+    const existing = await prisma.rule.findFirst({ where: { id, userId } });
     if (!existing) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    await prisma.category.delete({ where: { id } });
+    await prisma.rule.delete({ where: { id } });
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {
-    console.error("Error deleting category:", error);
+    console.error("Error deleting rule:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

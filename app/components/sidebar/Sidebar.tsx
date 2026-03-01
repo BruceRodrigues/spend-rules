@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@heroui/react";
 import {
   AdjustmentsHorizontalIcon,
   ArrowUpTrayIcon,
@@ -11,6 +10,7 @@ import {
   TagIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { Button } from "@heroui/react";
 import { useState } from "react";
 import SidebarNavItem from "./SidebarNavItem";
 import SidebarSection from "./SidebarSection";

@@ -1,23 +1,36 @@
 "use client";
 
-import { useState } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, Select, SelectItem } from "@heroui/react";
-import { useForm, Controller } from "react-hook-form";
-import type { Category } from "@prisma/client";
+import {
+  Button,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Select,
+  SelectItem,
+} from "@heroui/react";
+import type { Category, Rule } from "@prisma/client";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import InlineCategoryForm from "./InlineCategoryForm";
 
-interface AddRuleFormValues {
+type RuleWithCategory = Rule & { category: Category };
+
+interface RuleFormValues {
   name: string;
   pattern: string;
   matchType: "KEYWORD" | "REGEX" | "EXACT";
   categoryId: string;
 }
 
-interface AddRuleModalProps {
+interface RuleModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreated: () => void;
+  onSaved: () => void;
   categories: Category[];
+  rule?: RuleWithCategory | null;
 }
 
 const MATCH_TYPE_HELPER: Record<string, string> = {
@@ -26,12 +39,8 @@ const MATCH_TYPE_HELPER: Record<string, string> = {
   EXACT: "Matches only if the description is exactly equal to this pattern.",
 };
 
-export default function AddRuleModal({
-  isOpen,
-  onClose,
-  onCreated,
-  categories,
-}: AddRuleModalProps) {
+export default function RuleModal({ isOpen, onClose, onSaved, categories, rule }: RuleModalProps) {
+  const isEditing = rule != null;
   const [showInlineForm, setShowInlineForm] = useState(false);
   const [localCategories, setLocalCategories] = useState<Category[]>([]);
 
@@ -43,7 +52,7 @@ export default function AddRuleModal({
     setValue,
     control,
     formState: { errors, isSubmitting },
-  } = useForm<AddRuleFormValues>({
+  } = useForm<RuleFormValues>({
     defaultValues: {
       name: "",
       pattern: "",
@@ -52,14 +61,40 @@ export default function AddRuleModal({
     },
   });
 
+  useEffect(() => {
+    if (isEditing) {
+      reset({
+        name: rule.name,
+        pattern: rule.pattern,
+        matchType: rule.matchType,
+        categoryId: rule.categoryId,
+      });
+    } else {
+      reset({ name: "", pattern: "", matchType: "KEYWORD", categoryId: "" });
+      setShowInlineForm(false);
+      setLocalCategories([]);
+    }
+  }, [isOpen, rule, reset, isEditing]);
+
   const watchedMatchType = watch("matchType");
   const allCategories = [...categories, ...localCategories];
 
-  async function onSubmit(data: AddRuleFormValues) {
-    const response = await fetch("/api/rules", {
-      method: "POST",
+  async function onSubmit(data: RuleFormValues) {
+    const url = isEditing ? `/api/rules/${rule.id}` : "/api/rules";
+    const method = isEditing ? "PATCH" : "POST";
+    const body = isEditing
+      ? {
+          name: data.name,
+          pattern: data.pattern,
+          matchType: data.matchType,
+          categoryId: data.categoryId,
+        }
+      : { ...data, priority: 0, isActive: true };
+
+    const response = await fetch(url, {
+      method,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...data, priority: 0, isActive: true }),
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) return;
@@ -67,7 +102,7 @@ export default function AddRuleModal({
     reset();
     setShowInlineForm(false);
     setLocalCategories([]);
-    onCreated();
+    onSaved();
     onClose();
   }
 
@@ -128,9 +163,10 @@ export default function AddRuleModal({
     <Modal isOpen={isOpen} onClose={handleClose} size="md">
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader className="text-foreground">Add Rule</ModalHeader>
+          <ModalHeader className="text-foreground">
+            {isEditing ? "Edit Rule" : "Add Rule"}
+          </ModalHeader>
           <ModalBody className="flex flex-col gap-4">
-
             <Input
               label="Name"
               isRequired
@@ -162,9 +198,7 @@ export default function AddRuleModal({
               label="Pattern"
               isRequired
               placeholder={
-                watchedMatchType === "REGEX"
-                  ? "e.g. (?i)supermarket.*"
-                  : "e.g. supermarket"
+                watchedMatchType === "REGEX" ? "e.g. (?i)supermarket.*" : "e.g. supermarket"
               }
               description={MATCH_TYPE_HELPER[watchedMatchType]}
               {...register("pattern", { required: "Pattern is required" })}
@@ -178,14 +212,13 @@ export default function AddRuleModal({
               </label>
               {renderCategoryField()}
             </div>
-
           </ModalBody>
           <ModalFooter>
             <Button variant="flat" onPress={handleClose} type="button">
               Cancel
             </Button>
             <Button color="primary" type="submit" isLoading={isSubmitting}>
-              Create Rule
+              {isEditing ? "Save Changes" : "Create Rule"}
             </Button>
           </ModalFooter>
         </form>

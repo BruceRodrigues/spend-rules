@@ -1,24 +1,21 @@
 "use client";
 
-import { Input } from "@heroui/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useCallback, useEffect, useState } from "react";
+import { Input } from "@heroui/react";
 import debounce from "lodash/debounce";
+import { useCallback, useEffect, useState } from "react";
 
 interface CategoriesFiltersProps {
   search: string;
   onSearchChange: (value: string) => void;
 }
 
-export default function CategoriesFilters({
-  search,
-  onSearchChange,
-}: CategoriesFiltersProps) {
+export default function CategoriesFilters({ search, onSearchChange }: CategoriesFiltersProps) {
   const [inputValue, setInputValue] = useState(search);
 
   const debouncedOnSearchChange = useCallback(
     debounce((value: string) => onSearchChange(value), 300),
-    [onSearchChange],
+    [onSearchChange]
   );
 
   useEffect(() => {

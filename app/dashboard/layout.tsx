@@ -1,5 +1,5 @@
-import { auth } from "@/auth";
 import Sidebar from "@/app/components/sidebar/Sidebar";
+import { auth } from "@/auth";
 import type { ReactNode } from "react";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
@@ -14,9 +14,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
           image: session?.user?.image ?? null,
         }}
       />
-      <main className="flex-1 overflow-auto pt-14 lg:pt-0">
-        {children}
-      </main>
+      <main className="flex-1 overflow-auto pt-14 lg:pt-0">{children}</main>
     </div>
   );
 }

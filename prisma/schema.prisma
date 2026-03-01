@@ -97,6 +97,9 @@ model ImportBatch {
   totalRows    Int
   matchedRows  Int      @default(0)
 
+  startDate    DateTime?
+  endDate      DateTime?
+
   user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   creditCard   CreditCard? @relation(fields: [creditCardId], references: [id], onDelete: SetNull)
   transactions Transaction[]

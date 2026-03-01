@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
 import { requireUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
     const userId = await requireUserId();
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get("limit") || "50");
-    const offset = parseInt(searchParams.get("offset") || "0");
+    const limit = Number.parseInt(searchParams.get("limit") || "50");
+    const offset = Number.parseInt(searchParams.get("offset") || "0");
 
     const transactions = await prisma.transaction.findMany({
       where: {
@@ -38,10 +38,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error fetching transactions:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -54,7 +51,7 @@ export async function POST(request: NextRequest) {
     if (!date || !description || amount === undefined) {
       return NextResponse.json(
         { error: "Date, description, and amount are required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -68,10 +65,7 @@ export async function POST(request: NextRequest) {
       });
 
       if (!category) {
-        return NextResponse.json(
-          { error: "Category not found" },
-          { status: 404 },
-        );
+        return NextResponse.json({ error: "Category not found" }, { status: 404 });
       }
     }
 
@@ -85,10 +79,7 @@ export async function POST(request: NextRequest) {
       });
 
       if (!rule) {
-        return NextResponse.json(
-          { error: "Rule not found" },
-          { status: 404 },
-        );
+        return NextResponse.json({ error: "Rule not found" }, { status: 404 });
       }
     }
 
@@ -97,7 +88,7 @@ export async function POST(request: NextRequest) {
         userId,
         date: new Date(date),
         description,
-        amount: parseFloat(amount),
+        amount: Number.parseFloat(amount),
         categoryId: categoryId || null,
         ruleId: ruleId || null,
         isMatched: !!(categoryId || ruleId),
@@ -112,9 +103,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(transaction, { status: 201 });
   } catch (error) {
     console.error("Error creating transaction:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
