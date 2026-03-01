@@ -13,28 +13,30 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { HexColorPicker } from "react-colorful";
 import type { Category } from "@prisma/client";
+import { generateReadableColor } from "@/lib/colors";
 
 type CategoryWithCount = Category & { _count: { rules: number } };
 
-interface EditCategoryFormValues {
+interface CategoryFormValues {
   name: string;
   description: string;
   color: string;
 }
 
-interface EditCategoryModalProps {
+interface CategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onUpdated: () => void;
-  category: CategoryWithCount | null;
+  onSaved: () => void;
+  category?: CategoryWithCount | null;
 }
 
-export default function EditCategoryModal({
+export default function CategoryModal({
   isOpen,
   onClose,
-  onUpdated,
+  onSaved,
   category,
-}: EditCategoryModalProps) {
+}: CategoryModalProps) {
+  const isEditing = category != null;
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
   const {
@@ -44,30 +46,37 @@ export default function EditCategoryModal({
     setValue,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<EditCategoryFormValues>({
+  } = useForm<CategoryFormValues>({
     defaultValues: { name: "", description: "", color: "" },
   });
 
   const watchedColor = watch("color");
 
   useEffect(() => {
-    if (isOpen && category) {
-      reset({
-        name: category.name,
-        description: category.description ?? "",
-        color: category.color ?? "",
-      });
+    if (isOpen) {
+      if (isEditing) {
+        reset({
+          name: category.name,
+          description: category.description ?? "",
+          color: category.color ?? "",
+        });
+      } else {
+        setValue("color", generateReadableColor());
+      }
     } else {
       reset();
       setIsPickerOpen(false);
     }
-  }, [isOpen, category, reset]);
+  }, [isOpen, category, isEditing, reset, setValue]);
 
-  async function onSubmit(data: EditCategoryFormValues) {
-    if (!category) return;
+  async function onSubmit(data: CategoryFormValues) {
+    const url = isEditing
+      ? `/api/categories/${category.id}`
+      : "/api/categories";
+    const method = isEditing ? "PATCH" : "POST";
 
-    const response = await fetch(`/api/categories/${category.id}`, {
-      method: "PATCH",
+    const response = await fetch(url, {
+      method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: data.name,
@@ -78,7 +87,8 @@ export default function EditCategoryModal({
 
     if (!response.ok) return;
 
-    onUpdated();
+    if (!isEditing) reset();
+    onSaved();
     onClose();
   }
 
@@ -92,7 +102,9 @@ export default function EditCategoryModal({
     <Modal isOpen={isOpen} onClose={handleClose} size="md">
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader className="text-foreground">Edit Category</ModalHeader>
+          <ModalHeader className="text-foreground">
+            {isEditing ? "Edit Category" : "Add Category"}
+          </ModalHeader>
           <ModalBody className="flex flex-col gap-4">
             <Input
               label="Name"
@@ -150,7 +162,7 @@ export default function EditCategoryModal({
               Cancel
             </Button>
             <Button color="primary" type="submit" isLoading={isSubmitting}>
-              Save Changes
+              {isEditing ? "Save Changes" : "Create Category"}
             </Button>
           </ModalFooter>
         </form>

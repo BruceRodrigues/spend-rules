@@ -19,7 +19,7 @@ When building a listing page, break it into the following components under `app/
 - **`{Feature}sTable.tsx`** — Table layout with column headers, skeleton loading rows, empty state, and pagination controls. Delegates row rendering to the Row component.
 - **`{Feature}Row.tsx`** — A single table row. Purely presentational, no state.
 - **`{Feature}sFilters.tsx`** — Search input and any filter controls (dropdowns, button groups). Uses local state with debouncing synced to the parent.
-- **`Add{Feature}Modal.tsx`** — Form modal for creating a new item. Uses `react-hook-form` and resets on close.
+- **`{Feature}Modal.tsx`** — Form modal for creating and editing an item. Uses `react-hook-form` and resets on close. Receives an optional `category` prop (or equivalent): when present, renders in edit mode (populates form, sends `PATCH`); when absent, renders in add mode (generates defaults, sends `POST`).
 
 The **page component** (`app/dashboard/{feature}/page.tsx`) acts as the container:
 - Owns all state (search, filters, pagination, modal open/close)
@@ -31,7 +31,7 @@ The **page component** (`app/dashboard/{feature}/page.tsx`) acts as the containe
 - Table: `{Feature}sTable` (plural)
 - Row: `{Feature}Row` (singular)
 - Filters: `{Feature}sFilters` (plural)
-- Modal: `Add{Feature}Modal`
+- Modal: `{Feature}Modal`
 
 ## UI Components
 

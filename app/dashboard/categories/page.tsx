@@ -7,8 +7,7 @@ import useSWR from "swr";
 import type { Category } from "@prisma/client";
 import CategoriesFilters from "@/app/components/categories/CategoriesFilters";
 import CategoriesTable from "@/app/components/categories/CategoriesTable";
-import AddCategoryModal from "@/app/components/categories/AddCategoryModal";
-import EditCategoryModal from "@/app/components/categories/EditCategoryModal";
+import CategoryModal from "@/app/components/categories/CategoryModal";
 import DeleteCategoryModal from "@/app/components/categories/DeleteCategoryModal";
 
 type CategoryWithCount = Category & { _count: { rules: number } };
@@ -53,11 +52,7 @@ export default function CategoriesPage() {
     setPage(1);
   }
 
-  function handleCategoryCreated() {
-    mutate();
-  }
-
-  function handleCategoryUpdated() {
+  function handleCategorySaved() {
     mutate();
   }
 
@@ -96,16 +91,10 @@ export default function CategoriesPage() {
         />
       </div>
 
-      <AddCategoryModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onCreated={handleCategoryCreated}
-      />
-
-      <EditCategoryModal
-        isOpen={categoryToEdit !== null}
-        onClose={() => setCategoryToEdit(null)}
-        onUpdated={handleCategoryUpdated}
+      <CategoryModal
+        isOpen={isAddModalOpen || categoryToEdit !== null}
+        onClose={() => { setIsAddModalOpen(false); setCategoryToEdit(null); }}
+        onSaved={handleCategorySaved}
         category={categoryToEdit}
       />
 
