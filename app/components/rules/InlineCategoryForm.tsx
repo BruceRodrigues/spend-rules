@@ -92,7 +92,7 @@ export default function InlineCategoryForm({ onCreated, onCancel }: InlineCatego
         <Button variant="bordered" size="sm" onPress={onCancel}>
           Cancel
         </Button>
-        <Button color="primary" size="sm" isLoading={isSubmitting} onPress={handleSubmit(onSubmit)}>
+        <Button color="primary" size="sm" isLoading={isSubmitting} onPress={() => handleSubmit(onSubmit)()}>
           Add Category
         </Button>
       </div>

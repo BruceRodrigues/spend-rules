@@ -46,6 +46,10 @@ const navSections = [
   },
 ];
 
+const sidebarGradient = {
+  background: "linear-gradient(to bottom, hsl(var(--heroui-content1)) 40%, #052e16)",
+};
+
 export default function Sidebar({ user }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -97,7 +101,8 @@ export default function Sidebar({ user }: SidebarProps) {
 
       {/* Mobile drawer */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-60 bg-content1 shadow-lg transition-transform duration-300 lg:hidden ${
+        style={sidebarGradient}
+        className={`fixed inset-y-0 left-0 z-40 w-60 shadow-lg transition-transform duration-300 lg:hidden ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -114,7 +119,7 @@ export default function Sidebar({ user }: SidebarProps) {
       </aside>
 
       {/* Desktop sidebar */}
-      <aside className="hidden w-60 shrink-0 border-r border-divider bg-content1 lg:flex lg:flex-col">
+      <aside style={sidebarGradient} className="hidden w-60 shrink-0 border-r border-divider lg:flex lg:flex-col">
         {sidebarContent}
       </aside>
     </>
