@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Spend Rules - Credit Card Expense Analyzer",
+  title: "Norma - Credit Card Expense Analyzer",
   description: "Analyze and categorize credit card expenses",
 };
 

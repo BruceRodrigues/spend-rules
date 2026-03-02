@@ -59,14 +59,14 @@ export default function RegisterPage() {
       <div className="w-full max-w-md">
         <div className="mb-6 flex flex-col items-center gap-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-900">
-            <span className="text-sm font-bold text-white">SR</span>
+            <span className="text-sm font-bold text-white">N</span>
           </div>
-          <span className="text-base font-semibold text-foreground">Spend Rules</span>
+          <span className="text-base font-semibold text-foreground">Norma</span>
         </div>
       <Card className="w-full">
         <CardHeader className="flex flex-col items-start gap-2 pb-0">
           <h1 className="text-2xl font-bold">Create Account</h1>
-          <p className="text-small text-default-500">Sign up to get started with Spend Rules</p>
+          <p className="text-small text-default-500">Sign up to get started with Norma</p>
         </CardHeader>
         <CardBody className="gap-4 pt-6">
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">

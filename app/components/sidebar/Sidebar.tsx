@@ -57,9 +57,9 @@ export default function Sidebar({ user }: SidebarProps) {
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-2.5 px-4 py-5">
         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-green-900">
-          <span className="text-xs font-bold text-white">SR</span>
+          <span className="text-xs font-bold text-white">N</span>
         </div>
-        <span className="text-lg font-semibold text-white">Spend Rules</span>
+        <span className="text-lg font-semibold text-white">Norma</span>
       </div>
       <nav className="flex flex-1 flex-col gap-6 overflow-y-auto px-3 py-2">
         {navSections.map((section) => (

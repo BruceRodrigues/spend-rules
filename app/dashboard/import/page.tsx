@@ -7,6 +7,7 @@ import type { ParsedFile } from "@/app/components/import/DropZone";
 import ImportResults from "@/app/components/import/ImportResults";
 import type { ImportBatchResult } from "@/app/components/import/ImportResults";
 import ProcessingScreen from "@/app/components/import/ProcessingScreen";
+import { parseAmount } from "@/lib/csv";
 import type { CreditCard } from "@prisma/client";
 import { useState } from "react";
 import useSWR from "swr";
@@ -67,7 +68,7 @@ export default function ImportPage() {
     const rows = parsedFile.rows.map((row) => ({
       date: row[columnMapping.dateColumn] ?? "",
       description: row[columnMapping.descColumn] ?? "",
-      amount: Number.parseFloat((row[columnMapping.amountColumn] ?? "0").replace(",", ".")),
+      amount: parseAmount(row[columnMapping.amountColumn] ?? "0"),
       rawData: row,
     }));
 

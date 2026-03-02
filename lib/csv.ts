@@ -3,6 +3,7 @@ const DESCRIPTION_HINTS = [
   "description",
   "descricao",
   "descricção",
+  "lançamento",
   "memo",
   "merchant",
   "title",
@@ -33,6 +34,35 @@ export function detectColumns(headers: string[]): ColumnDetectionResult {
   const isConfident = dateColumn !== null && descColumn !== null && amountColumn !== null;
 
   return { dateColumn, descColumn, amountColumn, isConfident };
+}
+
+export function parseAmount(value: string): number {
+  let cleaned = value.trim();
+
+  // Remove anything that isn't a digit, dot, comma, dash or parentheses
+  cleaned = cleaned.replace(/[^\d.,()-]/g, "");
+
+  // Handle accounting negative format: (1.234,56) → -1234.56
+  const isNegative = cleaned.startsWith("(") && cleaned.endsWith(")");
+  if (isNegative) {
+    cleaned = cleaned.slice(1, -1);
+  }
+
+  // Detect decimal separator by the position of the last separator found.
+  // "1.234,56" → comma is last → comma is decimal, dots are thousands
+  // "1,234.56" → dot is last   → dot is decimal, commas are thousands
+  const lastComma = cleaned.lastIndexOf(",");
+  const lastDot = cleaned.lastIndexOf(".");
+
+  if (lastComma > lastDot) {
+    cleaned = cleaned.replace(/\./g, "").replace(",", ".");
+  } else {
+    cleaned = cleaned.replace(/,/g, "");
+  }
+
+  const result = Number.parseFloat(cleaned);
+  if (Number.isNaN(result)) return 0;
+  return isNegative ? -result : result;
 }
 
 export function parseDate(value: string): Date {

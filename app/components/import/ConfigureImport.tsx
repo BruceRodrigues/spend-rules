@@ -219,7 +219,7 @@ export default function ConfigureImport({
                 }}
               >
                 {creditCards.map((c) => (
-                  <SelectItem key={c.id}>
+                  <SelectItem key={c.id} textValue={c.bank ? `${c.name} — ${c.bank}` : c.name}>
                     {c.name}
                     {c.bank ? ` — ${c.bank}` : ""}
                   </SelectItem>
