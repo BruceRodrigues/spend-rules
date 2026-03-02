@@ -55,8 +55,11 @@ export default function Sidebar({ user }: SidebarProps) {
 
   const sidebarContent = (
     <div className="flex h-full flex-col">
-      <div className="flex items-center gap-2 px-4 py-5">
-        <span className="text-lg font-semibold text-foreground">Spend Rules</span>
+      <div className="flex items-center gap-2.5 px-4 py-5">
+        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-green-900">
+          <span className="text-xs font-bold text-white">SR</span>
+        </div>
+        <span className="text-lg font-semibold text-white">Spend Rules</span>
       </div>
       <nav className="flex flex-1 flex-col gap-6 overflow-y-auto px-3 py-2">
         {navSections.map((section) => (
@@ -72,7 +75,7 @@ export default function Sidebar({ user }: SidebarProps) {
           </SidebarSection>
         ))}
       </nav>
-      <div className="border-t border-divider px-1 py-3">
+      <div className="border-t border-white/10 px-1 py-3">
         <SidebarUserMenu name={user.name} email={user.email} image={user.image} />
       </div>
     </div>
@@ -109,7 +112,7 @@ export default function Sidebar({ user }: SidebarProps) {
         <Button
           isIconOnly
           variant="light"
-          className="absolute right-3 top-4"
+          className="absolute right-3 top-4 text-white/70 hover:text-white"
           onPress={() => setMobileOpen(false)}
           aria-label="Close sidebar"
         >

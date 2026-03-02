@@ -41,7 +41,7 @@ export default function SidebarUserMenu({ name, email, image }: SidebarUserMenuP
   return (
     <Dropdown placement="top-start">
       <DropdownTrigger>
-        <div className="flex items-center gap-3 rounded-md px-3 py-2 cursor-pointer hover:bg-default-100 transition-colors">
+        <div className="flex items-center gap-3 rounded-md px-3 py-2 cursor-pointer hover:bg-white/10 transition-colors">
           <div className="shrink-0">
             {image ? (
               <img
@@ -56,8 +56,8 @@ export default function SidebarUserMenu({ name, email, image }: SidebarUserMenuP
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-foreground">{name ?? "User"}</p>
-            <p className="truncate text-xs text-default-400">{email ?? ""}</p>
+            <p className="truncate text-sm font-medium text-white">{name ?? "User"}</p>
+            <p className="truncate text-xs text-white/50">{email ?? ""}</p>
           </div>
         </div>
       </DropdownTrigger>
