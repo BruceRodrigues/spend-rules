@@ -2,8 +2,9 @@
 
 import { Button, Card, CardBody, CardHeader, Link } from "@heroui/react";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
 
@@ -70,5 +71,13 @@ export default function VerifyEmailPage() {
         </CardBody>
       </Card>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }

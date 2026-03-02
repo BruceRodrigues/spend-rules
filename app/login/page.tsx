@@ -3,7 +3,7 @@
 import { Button, Card, CardBody, CardHeader, Input, Link } from "@heroui/react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 
 type LoginFormData = {
@@ -11,7 +11,7 @@ type LoginFormData = {
   password: string;
 };
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
@@ -141,5 +141,13 @@ export default function LoginPage() {
       </Card>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

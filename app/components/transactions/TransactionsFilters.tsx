@@ -70,8 +70,7 @@ export default function TransactionsFilters({
         }}
         className="w-48"
       >
-        <SelectItem key="">All categories</SelectItem>
-        {categories.map((category) => (
+        {[{ id: "", name: "All categories" }, ...categories].map((category) => (
           <SelectItem key={category.id}>{category.name}</SelectItem>
         ))}
       </Select>
@@ -86,8 +85,7 @@ export default function TransactionsFilters({
         }}
         className="w-48"
       >
-        <SelectItem key="">All cards</SelectItem>
-        {creditCards.map((card) => (
+        {[{ id: "", name: "All cards" }, ...creditCards].map((card) => (
           <SelectItem key={card.id}>{card.name}</SelectItem>
         ))}
       </Select>

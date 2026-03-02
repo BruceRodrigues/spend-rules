@@ -38,8 +38,34 @@ The **page component** (`app/dashboard/{feature}/page.tsx`) acts as the containe
 - Always use HeroUI components (`<Button>`, `<Input>`, `<Select>`, etc.) over native `<button>`, `<input>`, `<select>` elements
 - HeroUI `<Input>` works with `react-hook-form` via `{...register(...)}` spread; use `label`, `isInvalid`, and `errorMessage` props instead of separate `<label>` and error `<p>` tags
 - HeroUI `<Select>` requires `Controller` from `react-hook-form` (does not support `register()` spread); use `selectedKeys` and `onSelectionChange`
+- HeroUI `<Select>` does not accept a mix of static `<SelectItem>` elements and `.map()` results as siblings — this causes a `CollectionElement<object>` TypeScript error. Prepend static options into the array and use a single `.map()` instead:
+  ```tsx
+  // ✗ broken
+  <SelectItem key="">All</SelectItem>
+  {items.map(item => <SelectItem key={item.id}>{item.name}</SelectItem>)}
+
+  // ✓ correct
+  {[{ id: "", name: "All" }, ...items].map(item => (
+    <SelectItem key={item.id}>{item.name}</SelectItem>
+  ))}
+  ```
 - Use `onPress` (react-aria) for button handlers; `isDisabled` instead of `disabled`; `isIconOnly` for icon-only buttons; `isLoading` for loading state
 - Exceptions — keep as native elements: `<input type="hidden">`, color-swatch circular `<button>` with dynamic `backgroundColor` style
+
+## Next.js Patterns
+
+- Any page that calls `useSearchParams()` must extract its content into an inner component and wrap it in `<Suspense>` in the default export — otherwise Next.js fails to build with a CSR bailout error:
+
+  ```tsx
+  function MyPageContent() {
+    const searchParams = useSearchParams();
+    // ...
+  }
+
+  export default function MyPage() {
+    return <Suspense><MyPageContent /></Suspense>;
+  }
+  ```
 
 ## Code Clarity
 
