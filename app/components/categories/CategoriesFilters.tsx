@@ -15,7 +15,7 @@ export default function CategoriesFilters({ search, onSearchChange }: Categories
 
   const debouncedOnSearchChange = useCallback(
     debounce((value: string) => onSearchChange(value), 300),
-    [onSearchChange]
+    []
   );
 
   useEffect(() => {

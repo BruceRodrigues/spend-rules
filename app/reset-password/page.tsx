@@ -77,39 +77,39 @@ function ResetPasswordForm() {
           </div>
           <span className="text-base font-semibold text-foreground">Norma</span>
         </div>
-      <Card className="w-full">
-        <CardHeader className="flex flex-col items-start gap-2 pb-0">
-          <h1 className="text-2xl font-bold">Reset Password</h1>
-          <p className="text-small text-default-500">Enter your new password below.</p>
-        </CardHeader>
-        <CardBody className="gap-4 pt-6">
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-            <Input
-              label="New Password"
-              type="password"
-              placeholder="Enter your new password"
-              {...register("password", {
-                required: "Password is required",
-                minLength: { value: 8, message: "Password must be at least 8 characters" },
-              })}
-              isInvalid={!!errors.password}
-              errorMessage={errors.password?.message}
-              isDisabled={isLoading}
-            />
-            {error && (
-              <div className="flex flex-col gap-1">
-                <p className="text-small text-danger">{error}</p>
-                <Link href="/login" size="sm">
-                  Back to Sign In
-                </Link>
-              </div>
-            )}
-            <Button type="submit" color="primary" className="w-full" isLoading={isLoading}>
-              Reset Password
-            </Button>
-          </form>
-        </CardBody>
-      </Card>
+        <Card className="w-full">
+          <CardHeader className="flex flex-col items-start gap-2 pb-0">
+            <h1 className="text-2xl font-bold">Reset Password</h1>
+            <p className="text-small text-default-500">Enter your new password below.</p>
+          </CardHeader>
+          <CardBody className="gap-4 pt-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+              <Input
+                label="New Password"
+                type="password"
+                placeholder="Enter your new password"
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: { value: 8, message: "Password must be at least 8 characters" },
+                })}
+                isInvalid={!!errors.password}
+                errorMessage={errors.password?.message}
+                isDisabled={isLoading}
+              />
+              {error && (
+                <div className="flex flex-col gap-1">
+                  <p className="text-small text-danger">{error}</p>
+                  <Link href="/login" size="sm">
+                    Back to Sign In
+                  </Link>
+                </div>
+              )}
+              <Button type="submit" color="primary" className="w-full" isLoading={isLoading}>
+                Reset Password
+              </Button>
+            </form>
+          </CardBody>
+        </Card>
       </div>
     </div>
   );

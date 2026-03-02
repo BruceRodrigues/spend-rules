@@ -61,6 +61,7 @@ export default function RuleModal({ isOpen, onClose, onSaved, categories, rule }
     },
   });
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: isOpen triggers the reset intentionally
   useEffect(() => {
     if (isEditing) {
       reset({
@@ -207,6 +208,7 @@ export default function RuleModal({ isOpen, onClose, onSaved, categories, rule }
             />
 
             <div className="flex flex-col gap-1">
+              {/* biome-ignore lint/a11y/noLabelWithoutControl: label targets the HeroUI Select rendered by renderCategoryField */}
               <label className="text-sm font-medium text-foreground">
                 Category <span className="text-danger">*</span>
               </label>

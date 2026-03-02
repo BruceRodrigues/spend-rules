@@ -35,11 +35,7 @@ export default function CategoriesPage() {
 
   const categoriesUrl = buildCategoriesUrl(search, page);
 
-  const {
-    data: categoriesData,
-    isLoading,
-    mutate,
-  } = useSWR<CategoriesResponse>(categoriesUrl);
+  const { data: categoriesData, isLoading, mutate } = useSWR<CategoriesResponse>(categoriesUrl);
 
   function handleSearchChange(value: string) {
     setSearch(value);

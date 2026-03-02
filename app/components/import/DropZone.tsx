@@ -67,11 +67,9 @@ export default function DropZone({ onFileParsed }: DropZoneProps) {
 
   return (
     <div className="flex w-full flex-col items-center">
-      <div
-        role="button"
-        tabIndex={0}
+      <button
+        type="button"
         onClick={() => inputRef.current?.click()}
-        onKeyDown={(e) => e.key === "Enter" && inputRef.current?.click()}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -97,9 +95,7 @@ export default function DropZone({ onFileParsed }: DropZoneProps) {
           <p className="text-xl font-semibold text-foreground">
             {isDragging ? "Release to upload" : "Drop your CSV file here"}
           </p>
-          <p className="text-sm text-default-500">
-            Drag & drop or click anywhere to browse
-          </p>
+          <p className="text-sm text-default-500">Drag & drop or click anywhere to browse</p>
           <p className="mt-1 text-xs text-default-400">Only .csv files are accepted</p>
         </div>
 
@@ -121,7 +117,7 @@ export default function DropZone({ onFileParsed }: DropZoneProps) {
           className="hidden"
           onChange={handleInputChange}
         />
-      </div>
+      </button>
 
       {error && (
         <p className="mt-4 rounded-lg border border-danger/30 bg-danger/10 px-4 py-2 text-sm text-danger">

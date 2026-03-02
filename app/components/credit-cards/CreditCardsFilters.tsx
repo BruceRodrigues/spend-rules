@@ -15,7 +15,7 @@ export default function CreditCardsFilters({ search, onSearchChange }: CreditCar
 
   const debouncedOnSearchChange = useCallback(
     debounce((value: string) => onSearchChange(value), 300),
-    [onSearchChange],
+    []
   );
 
   useEffect(() => {

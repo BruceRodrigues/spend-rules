@@ -32,7 +32,7 @@ export default function RulesFilters({
 
   const debouncedOnSearchChange = useCallback(
     debounce((value: string) => onSearchChange(value), 300),
-    [onSearchChange]
+    []
   );
 
   // Keep local input in sync when parent resets search

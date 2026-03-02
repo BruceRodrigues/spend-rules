@@ -1,7 +1,7 @@
+import { randomBytes } from "node:crypto";
 import { requireUserId } from "@/lib/auth";
 import { sendPasswordResetEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
-import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 
 export async function POST() {
@@ -17,10 +17,7 @@ export async function POST() {
   }
 
   if (!user.password) {
-    return NextResponse.json(
-      { error: "This account uses Google Sign-In." },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "This account uses Google Sign-In." }, { status: 400 });
   }
 
   const identifier = `password-reset:${user.email}`;

@@ -182,6 +182,7 @@ export default function ConfigureImport({
               </thead>
               <tbody>
                 {previewRows.map((row, idx) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: CSV preview rows have no stable identifier
                   <tr key={idx} className="border-t border-divider">
                     <td className="px-4 py-2.5 text-default-600">
                       {row[columnMapping.dateColumn] ?? "—"}
@@ -265,9 +266,7 @@ export default function ConfigureImport({
             size="lg"
             isLoading={isSubmitting}
             isDisabled={
-              !columnMapping.dateColumn ||
-              !columnMapping.descColumn ||
-              !columnMapping.amountColumn
+              !columnMapping.dateColumn || !columnMapping.descColumn || !columnMapping.amountColumn
             }
             onPress={onImport}
           >

@@ -1,5 +1,5 @@
-import { Button } from "@heroui/react";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Button } from "@heroui/react";
 import type { Category, MatchType, Rule } from "@prisma/client";
 
 type RuleWithCategory = Rule & { category: Category };

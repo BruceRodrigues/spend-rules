@@ -41,7 +41,9 @@ export default function ImportResults({
       <div>
         <h2 className="text-3xl font-semibold text-foreground">Import complete!</h2>
         <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-sm text-default-500">
-          <span>{formatDate(result.startDate)} – {formatDate(result.endDate)}</span>
+          <span>
+            {formatDate(result.startDate)} – {formatDate(result.endDate)}
+          </span>
           {creditCardName && (
             <>
               <span>·</span>

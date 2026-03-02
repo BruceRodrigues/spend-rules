@@ -99,6 +99,8 @@ export default function Sidebar({ user }: SidebarProps) {
         <div
           className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={() => setMobileOpen(false)}
+          onKeyDown={(e) => e.key === "Escape" && setMobileOpen(false)}
+          role="presentation"
         />
       )}
 
@@ -122,7 +124,10 @@ export default function Sidebar({ user }: SidebarProps) {
       </aside>
 
       {/* Desktop sidebar */}
-      <aside style={sidebarGradient} className="hidden w-60 shrink-0 border-r border-divider lg:flex lg:flex-col">
+      <aside
+        style={sidebarGradient}
+        className="hidden w-60 shrink-0 border-r border-divider lg:flex lg:flex-col"
+      >
         {sidebarContent}
       </aside>
     </>

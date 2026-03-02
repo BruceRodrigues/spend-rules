@@ -105,7 +105,10 @@ export default function RulesPage() {
 
       <RuleModal
         isOpen={isModalOpen || ruleToEdit !== null}
-        onClose={() => { setIsModalOpen(false); setRuleToEdit(null); }}
+        onClose={() => {
+          setIsModalOpen(false);
+          setRuleToEdit(null);
+        }}
         onSaved={handleRuleSaved}
         categories={categoriesData?.categories ?? []}
         rule={ruleToEdit}

@@ -43,7 +43,15 @@ function EmptyState() {
   );
 }
 
-const TABLE_HEADERS = ["Name", "Pattern", "Match Type", "Category", "Priority", "Status", "Actions"];
+const TABLE_HEADERS = [
+  "Name",
+  "Pattern",
+  "Match Type",
+  "Category",
+  "Priority",
+  "Status",
+  "Actions",
+];
 
 export default function RulesTable({
   rules,
@@ -81,7 +89,9 @@ export default function RulesTable({
             ) : rules.length === 0 ? (
               <EmptyState />
             ) : (
-              rules.map((rule) => <RuleRow key={rule.id} rule={rule} onEdit={onEdit} onDelete={onDelete} />)
+              rules.map((rule) => (
+                <RuleRow key={rule.id} rule={rule} onEdit={onEdit} onDelete={onDelete} />
+              ))
             )}
           </tbody>
         </table>

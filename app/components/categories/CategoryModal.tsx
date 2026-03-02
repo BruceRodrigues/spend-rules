@@ -115,6 +115,7 @@ export default function CategoryModal({ isOpen, onClose, onSaved, category }: Ca
             />
 
             <div className="flex flex-col gap-1">
+              {/* biome-ignore lint/a11y/noLabelWithoutControl: label is decorative; value is set via color picker, not a focusable input */}
               <label className="text-sm font-medium text-foreground">
                 Color <span className="text-danger">*</span>
               </label>
