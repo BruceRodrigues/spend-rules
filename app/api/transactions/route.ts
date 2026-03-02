@@ -5,104 +5,54 @@ import { type NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   try {
     const userId = await requireUserId();
-    const { searchParams } = new URL(request.url);
-    const limit = Number.parseInt(searchParams.get("limit") || "50");
-    const offset = Number.parseInt(searchParams.get("offset") || "0");
 
-    const transactions = await prisma.transaction.findMany({
-      where: {
-        userId,
-      },
-      include: {
-        category: true,
-        rule: true,
-      },
-      orderBy: {
-        date: "desc",
-      },
-      take: limit,
-      skip: offset,
-    });
+    const { searchParams } = request.nextUrl;
+    const page = Math.max(1, Number(searchParams.get("page") ?? "1"));
+    const limit = Math.max(1, Number(searchParams.get("limit") ?? "20"));
+    const skip = (page - 1) * limit;
 
-    const total = await prisma.transaction.count({
-      where: {
-        userId,
-      },
-    });
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
+    const categoryId = searchParams.get("categoryId");
+    const creditCardId = searchParams.get("creditCardId");
+
+    const where = {
+      userId,
+      ...(startDate || endDate
+        ? {
+            date: {
+              ...(startDate ? { gte: new Date(startDate) } : {}),
+              ...(endDate ? { lte: new Date(`${endDate}T23:59:59.999Z`) } : {}),
+            },
+          }
+        : {}),
+      ...(categoryId ? { categoryId } : {}),
+      ...(creditCardId ? { creditCardId } : {}),
+    };
+
+    const [transactions, total] = await Promise.all([
+      prisma.transaction.findMany({
+        where,
+        orderBy: [{ date: "desc" }, { createdAt: "desc" }],
+        skip,
+        take: limit,
+        include: {
+          category: { select: { id: true, name: true, color: true } },
+          creditCard: { select: { id: true, name: true, bank: true, color: true } },
+          rule: { select: { id: true, name: true } },
+        },
+      }),
+      prisma.transaction.count({ where }),
+    ]);
 
     return NextResponse.json({
-      transactions,
+      data: transactions,
       total,
-      limit,
-      offset,
+      page,
+      totalPages: Math.max(1, Math.ceil(total / limit)),
     });
   } catch (error) {
     console.error("Error fetching transactions:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
-}
-
-export async function POST(request: NextRequest) {
-  try {
-    const userId = await requireUserId();
-    const body = await request.json();
-    const { date, description, amount, categoryId, ruleId, rawData } = body;
-
-    if (!date || !description || amount === undefined) {
-      return NextResponse.json(
-        { error: "Date, description, and amount are required" },
-        { status: 400 }
-      );
-    }
-
-    // Verify category belongs to user if provided
-    if (categoryId) {
-      const category = await prisma.category.findFirst({
-        where: {
-          id: categoryId,
-          userId,
-        },
-      });
-
-      if (!category) {
-        return NextResponse.json({ error: "Category not found" }, { status: 404 });
-      }
-    }
-
-    // Verify rule belongs to user if provided
-    if (ruleId) {
-      const rule = await prisma.rule.findFirst({
-        where: {
-          id: ruleId,
-          userId,
-        },
-      });
-
-      if (!rule) {
-        return NextResponse.json({ error: "Rule not found" }, { status: 404 });
-      }
-    }
-
-    const transaction = await prisma.transaction.create({
-      data: {
-        userId,
-        date: new Date(date),
-        description,
-        amount: Number.parseFloat(amount),
-        categoryId: categoryId || null,
-        ruleId: ruleId || null,
-        isMatched: !!(categoryId || ruleId),
-        rawData: rawData || null,
-      },
-      include: {
-        category: true,
-        rule: true,
-      },
-    });
-
-    return NextResponse.json(transaction, { status: 201 });
-  } catch (error) {
-    console.error("Error creating transaction:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
