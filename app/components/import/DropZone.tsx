@@ -44,7 +44,7 @@ export default function DropZone({ onFileParsed }: DropZoneProps) {
     });
   }
 
-  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
+  function handleDragOver(e: React.DragEvent<HTMLElement>) {
     e.preventDefault();
     setIsDragging(true);
   }
@@ -53,7 +53,7 @@ export default function DropZone({ onFileParsed }: DropZoneProps) {
     setIsDragging(false);
   }
 
-  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+  function handleDrop(e: React.DragEvent<HTMLElement>) {
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files[0];

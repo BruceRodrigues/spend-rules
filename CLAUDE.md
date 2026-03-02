@@ -67,8 +67,9 @@ The **page component** (`app/dashboard/{feature}/page.tsx`) acts as the containe
   }
   ```
 
-## Linting & Formatting
+## Linting, Formatting & Build
 
+- All code must pass `bun run build` with zero errors before being committed
 - All code must pass `bun run lint` (Biome) with zero errors before being committed
 - Never suppress a Biome rule with `biome-ignore` unless it is a genuine false positive — add a clear justification comment explaining why
 - Run `bun run lint:fix` to auto-fix formatting issues; manually fix any remaining lint errors
